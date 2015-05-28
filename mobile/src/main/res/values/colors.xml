@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="primary" type="color">#FF388E3C</item>
+    <item name="primaryDark" type="color">#FF1B5E20</item>
+    <item name="primaryLight" type="color">#FF81C784</item>
+
+    <item name="secondary" type="color">#FFFF3D00</item>
+    <item name="secondaryFallback1" type="color">#FFFF6E40</item>
+    <item name="secondaryFallback2" type="color">#FFFF9E80</item>
+</resources>
