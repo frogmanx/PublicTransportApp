@@ -12,13 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.adam.pubtrans.Crime;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
-import com.example.adam.pubtrans.fragments.MainActivityFragment;
+import com.example.adam.pubtrans.fragments.DisruptionsFragment;
+import com.example.adam.pubtrans.fragments.NearMeListFragment;
+import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
+import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
+import com.example.adam.pubtrans.models.Disruption;
+import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -41,8 +46,9 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    ArrayList<NearMeResult> nearMeResults;
+    ArrayList<Disruption>  disruptionsResults;
 
-    private ArrayList<Crime> persons;
     private ArrayList<Marker> markerArrayList;
     ArrayList<Fragment> fragments;
     private GoogleMap googleMap;
@@ -56,7 +62,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        disruptionsResults = new ArrayList<>();
+        nearMeResults = new ArrayList<>();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
 
@@ -84,34 +91,12 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         ((SupportMapFragment)fragments.get(0)).getMapAsync(this);
         buildGoogleApiClient();
 
+        try {
+            WebApi.getDisruptions(this);
 
-
-        /*final com.rey.material.widget.FloatingActionButton fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab);
-        ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                // Or read size directly from the view's width/height
-                int size = getResources().getDimensionPixelSize(R.dimen.fab_size);
-                outline.setOval(0, 0, size, size);
-            }
-        };
-        fab.setOutlineProvider(viewOutlineProvider);
-
-
-        // define a click listener
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
-                // create the transition animation - the images in the layouts
-                // of both activities are defined with android:transitionName="robot"
-                ActivityOptions options = ActivityOptions
-                        .makeSceneTransitionAnimation((Activity) view.getContext(), fab, "robot");
-                // start the new activity
-                startActivity(intent, options.toBundle());
-            }
-        });
-        */
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -120,10 +105,18 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         List<Fragment> fList = new ArrayList<>();
 
         fList.add(SupportMapFragment.newInstance());
-        fList.add(MainActivityFragment.newInstance("Fragment 3"));
+        fList.add(NearMeListFragment.newInstance("Fragment 2"));
+        fList.add(DisruptionsFragment.newInstance("Fragment 3"));
 
         return fList;
 
+    }
+
+    public ArrayList<Disruption> getDisruptionsResults() {
+        return disruptionsResults;
+    }
+    public ArrayList<NearMeResult> getNearMeResults() {
+        return nearMeResults;
     }
 
 
@@ -212,11 +205,13 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     }
 
     public void nearMeResponse(final ArrayList<NearMeResult> nearMeResults) {
+        this.nearMeResults = nearMeResults;
         runOnUiThread(new Runnable()
         {
 
             public void run()
             {
+                ((IResults) fragments.get(1)).setResults(nearMeResults);
                 for(NearMeResult object: nearMeResults){
                     LatLng loc = new LatLng(object.latitude, object.longitude);
                     markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
@@ -229,21 +224,23 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
     }
 
-    public void nearMeResponse(String nearMeResults) {
-        Log.e(TAG, nearMeResults);
-        Toast.makeText(this, nearMeResults, Toast.LENGTH_LONG).show();
-        /*LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-        mMarker = googleMap.addMarker(new MarkerOptions().position(loc));
-        if(googleMap != null){
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-        }*/
+    public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResponse) {
+
     }
 
+    public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
+        this.disruptionsResults = disruptionsResults;
+        runOnUiThread(new Runnable()
+        {
 
+            public void run()
+            {
+                ((IResults) fragments.get(2)).setResults(disruptionsResults);
+            }
+        });
+    }
 
+    public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
 
-
-
-
-
+    }
 }

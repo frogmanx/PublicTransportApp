@@ -1,43 +1,43 @@
 package com.example.adam.pubtrans.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.adam.pubtrans.Crime;
 import com.example.adam.pubtrans.R;
-import com.example.adam.pubtrans.adapters.MyAdapter;
+import com.example.adam.pubtrans.activities.MainActivity;
+import com.example.adam.pubtrans.adapters.NearMeResultAdapter;
+import com.example.adam.pubtrans.interfaces.IResults;
+import com.example.adam.pubtrans.models.NearMeResult;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 
-
 /**
- * A placeholder fragment containing a simple view.
+ * Created by Adam on 31/05/2015.
  */
-public class MainActivityFragment extends Fragment {
+public class NearMeListFragment extends Fragment implements IResults<NearMeResult> {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Crime> persons;
-    private ArrayList<Marker> markerArrayList;
+    private ArrayList<NearMeResult> results;
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
-    public static final MainActivityFragment newInstance(String message) {
-        MainActivityFragment f = new MainActivityFragment();
+    public static final NearMeListFragment newInstance(String message) {
+        NearMeListFragment f = new NearMeListFragment();
         Bundle bdl = new Bundle(1);
         bdl.putString(EXTRA_MESSAGE, message);
         f.setArguments(bdl);
         return f;
     }
 
-    public MainActivityFragment() {
+    public NearMeListFragment() {
     }
 
     @Override
@@ -54,15 +54,22 @@ public class MainActivityFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        persons = new ArrayList<>();
-        persons.add(new Crime("Emma Wilson", "23 years old", R.mipmap.ic_launcher));
-        persons.add(new Crime("Lavery Maiss", "25 years old", R.mipmap.ic_launcher));
-        persons.add(new Crime("Lillie Watts", "35 years old", R.mipmap.ic_launcher));
+        results = ((MainActivity)getActivity()).getNearMeResults();
 
-        mAdapter = new MyAdapter(persons);
+        mAdapter = new NearMeResultAdapter(results);
         mRecyclerView.setAdapter(mAdapter);
 
 
         return v;
+    }
+
+    public void refresh() {
+
+    }
+
+    public void setResults(ArrayList<NearMeResult> results) {
+        this.results.clear();
+        this.results.addAll(results);
+        mAdapter.notifyDataSetChanged();
     }
 }

@@ -7,4 +7,8 @@
     <item name="secondary" type="color">#FFFF3D00</item>
     <item name="secondaryFallback1" type="color">#FFFF6E40</item>
     <item name="secondaryFallback2" type="color">#FFFF9E80</item>
+
+
+    <item name="semiTransparent" type="color">#44999999</item>
+
 </resources>

@@ -1,6 +1,10 @@
 package com.example.adam.pubtrans.interfaces;
 
+import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
+import com.example.adam.pubtrans.models.Disruption;
+import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.models.Stop;
 
 import java.util.ArrayList;
 
@@ -9,5 +13,7 @@ import java.util.ArrayList;
  */
 public interface IWebApiResponse {
     public void nearMeResponse(ArrayList<NearMeResult> nearMeResults);
-    public void nearMeResponse(String nearMeResults);
+    public void broadNextDeparturesResponse(ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults);
+    public void disruptionsResponse(ArrayList<Disruption> disruptionsResults);
+    public void stopsOnLineResponse(ArrayList<Stop> stopsOnLineResults);
 }

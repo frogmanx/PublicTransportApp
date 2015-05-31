@@ -7,19 +7,18 @@ import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.utils.HttpUtils;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 /**
- * Created by Adam on 30/05/2015.
+ * Created by Adam on 31/05/2015.
  */
-public class GetNearMeFetchThread implements Runnable {
+public class SearchFetchThread implements Runnable {
     private String mUrl;
     private IWebApiResponse mReponseInterface;
-    public GetNearMeFetchThread(String url, IWebApiResponse getNearMeInterface) {
+    public SearchFetchThread(String url, IWebApiResponse searchInterface) {
         this.mUrl = url;
-        this.mReponseInterface = getNearMeInterface;
+        this.mReponseInterface = searchInterface;
     }
 
     @Override
@@ -28,6 +27,8 @@ public class GetNearMeFetchThread implements Runnable {
 
 
         try {
+            //JSONObject result = new JSONObject(HttpUtils.httpGet(mUrl));
+            //Log.e("response", result.toString());
             JSONArray jsonArray = new JSONArray(HttpUtils.httpGet(mUrl));
             ArrayList<NearMeResult> resultArrayList = new ArrayList<>();
             for(int i = 0; i < jsonArray.length(); i++) {
@@ -36,6 +37,7 @@ public class GetNearMeFetchThread implements Runnable {
 
             mReponseInterface.nearMeResponse(resultArrayList);
 
+            //info = new BTCegetInfo(result);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

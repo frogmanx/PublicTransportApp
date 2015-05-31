@@ -3,7 +3,10 @@ package com.example.adam.pubtrans.utils;
 import android.util.Log;
 
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
+import com.example.adam.pubtrans.runnables.DisruptionsFetchThread;
+import com.example.adam.pubtrans.runnables.GetBroadNextDeparturesFetchThread;
 import com.example.adam.pubtrans.runnables.GetNearMeFetchThread;
+import com.example.adam.pubtrans.runnables.StopsOnLineFetchThread;
 import com.example.adam.pubtrans.secrets.PTVAPIDetails;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -58,6 +61,37 @@ public class WebApi {
     public static void getNearMe(LatLng myLocation, IWebApiResponse getNearMeInterface) throws Exception{
         String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/nearme/latitude/"+myLocation.latitude+"/longitude/" + myLocation.longitude, PTVAPIDetails.USER_ID);
         (new Thread(new GetNearMeFetchThread(url, getNearMeInterface))).start();
+    }
+
+    public static void getDisruptions(IWebApiResponse getDisruptionInterface) throws Exception{
+        String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/disruptions/modes/general,metro-train,metro-tram,metro-bus,regional-train,regional-bus,regional-coach", PTVAPIDetails.USER_ID);
+        (new Thread(new DisruptionsFetchThread(url, getDisruptionInterface))).start();
+    }
+
+    public static void getStopsOnALine(String transportType, int lineId, IWebApiResponse getDisruptionInterface) throws Exception{
+        int mode = getModeId(transportType);
+        String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/line/" + Integer.toString(lineId) +  "/stops-for-line", PTVAPIDetails.USER_ID);
+        Log.e("WebApi", url);
+        (new Thread(new StopsOnLineFetchThread(url, getDisruptionInterface))).start();
+    }
+
+
+    public static void getBroadNextDepatures(String transportType, int stopId, int limit, IWebApiResponse getBroadNextDeparturesInterface) throws Exception{
+        int mode = getModeId(transportType);
+        String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/stop/" + Integer.toString(stopId) + "/departures/by-destination/limit/" + Integer.toString(limit), PTVAPIDetails.USER_ID);
+        (new Thread(new GetBroadNextDeparturesFetchThread(url, getBroadNextDeparturesInterface))).start();
+    }
+
+    public static int getModeId(String transportType) {
+        int mode;
+        switch(transportType) {
+            case "train": mode = 0; break;
+            case "tram": mode = 1; break;
+            case "bus": mode = 2; break;
+            case "nightrider": mode = 4; break;
+            default: mode = 3; break;
+        }
+        return mode;
     }
 
 }

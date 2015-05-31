@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private final String[] TITLES = {"Map", "List"};
+    private final String[] TITLES = {"Map", "List", "Disruptions"};
     private ArrayList<Fragment> fragments;
 
     public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragmentArrayList) {
