@@ -1,14 +1,20 @@
 package com.example.adam.pubtrans.activities;
 
 import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.adam.pubtrans.R;
+import com.example.adam.pubtrans.SlidingTabLayout;
+import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
+import com.example.adam.pubtrans.fragments.StopsListFragment;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
@@ -17,32 +23,132 @@ import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends FragmentActivity implements IWebApiResponse {
+public class TertiaryActivity extends FragmentActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
     FragmentManager fragmentManager;
     ArrayList<Stop> stopsList;
+
+    private ArrayList<Marker> markerArrayList;
+    ArrayList<Fragment> fragments;
+    private GoogleMap googleMap;
+    public final static String TAG = "MainActivity";
+    ViewPager mViewPager;
+    SlidingTabLayout tabs;
+
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         stopsList = new ArrayList<>();
         setContentView(R.layout.tertiary_activity);
-        Bundle bundle = getIntent().getExtras();
-        try {
-            WebApi.getStopsOnALine(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.LINE_ID), this);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        fragments = (ArrayList<Fragment>) getFragments();
+
+
+        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+        mViewPager.setAdapter(adapter);
+
+        // Assiging the Sliding Tab Layout View
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.secondary);
+            }
+        });
+
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(mViewPager);
+
+
+        markerArrayList = new ArrayList<>();
+        //((SupportMapFragment)fragments.get(0)).getMapAsync(this);
+        buildGoogleApiClient();
+
+
+
+        ((SupportMapFragment)fragments.get(0)).getMapAsync(this);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         fragmentManager = getSupportFragmentManager();
+
+    }
+
+    private List<Fragment> getFragments(){
+
+        List<Fragment> fList = new ArrayList<>();
+
+        fList.add(SupportMapFragment.newInstance());
+        fList.add(StopsListFragment.newInstance("Fragment 2"));
+
+        return fList;
+
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = ((SupportMapFragment)fragments.get(0)).getMap();
+        googleMap.setMyLocationEnabled(true);
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(-37.82392, 144.9462017))
+                .title("Hello world"));
+    }
+
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            try {
+                Bundle bundle = getIntent().getExtras();
+                try {
+                    WebApi.getStopsOnALine(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.LINE_ID), this);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
 
     }
 
@@ -104,9 +210,13 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
         {
             public void run()
             {
-                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
-                if(fragment!=null) {
-                    ((IResults) fragment).setResults(stopResults);
+                ((IResults) fragments.get(1)).setResults(stopResults);
+                for(Stop object: stopResults){
+                    LatLng loc = new LatLng(object.latitude, object.longitude);
+                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
+                    if(googleMap != null){
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
+                    }
                 }
             }
         });

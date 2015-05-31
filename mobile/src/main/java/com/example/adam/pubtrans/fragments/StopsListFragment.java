@@ -12,10 +12,8 @@ import android.widget.RelativeLayout;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.MainActivity;
 import com.example.adam.pubtrans.activities.TertiaryActivity;
-import com.example.adam.pubtrans.adapters.NearMeResultAdapter;
 import com.example.adam.pubtrans.adapters.StopsResultAdapter;
 import com.example.adam.pubtrans.interfaces.IResults;
-import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 
 import java.util.ArrayList;
@@ -32,8 +30,8 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
-    public static final NearMeListFragment newInstance(String message) {
-        NearMeListFragment f = new NearMeListFragment();
+    public static final StopsListFragment newInstance(String message) {
+        StopsListFragment f = new StopsListFragment();
         Bundle bdl = new Bundle(1);
         bdl.putString(EXTRA_MESSAGE, message);
         f.setArguments(bdl);
