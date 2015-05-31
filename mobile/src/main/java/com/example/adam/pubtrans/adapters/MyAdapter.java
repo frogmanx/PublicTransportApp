@@ -1,4 +1,4 @@
-package com.example.adam.pubtrans;
+package com.example.adam.pubtrans.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.adam.pubtrans.Crime;
+import com.example.adam.pubtrans.CrimeHolder;
+import com.example.adam.pubtrans.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +21,7 @@ import java.util.List;
  */
 public class MyAdapter extends RecyclerView.Adapter<CrimeHolder> {
     ArrayList<Crime> mCrimes;
-    MyAdapter(ArrayList<Crime> crimes){
+    public MyAdapter(ArrayList<Crime> crimes){
         this.mCrimes = crimes;
     }
 

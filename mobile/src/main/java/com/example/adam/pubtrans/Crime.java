@@ -8,7 +8,7 @@ public class Crime {
     String age;
     int photoId;
 
-    Crime(String name, String age, int photoId) {
+    public Crime(String name, String age, int photoId) {
         this.name = name;
         this.age = age;
         this.photoId = photoId;

@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -38,8 +40,5 @@ public class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        if (mCrime != null) {
-            isAvailable.setChecked(true);
-        }
     }
 }
