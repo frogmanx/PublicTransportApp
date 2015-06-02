@@ -11,7 +11,16 @@ import com.example.adam.pubtrans.activities.SecondaryActivity;
 import com.example.adam.pubtrans.activities.TertiaryActivity;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.utils.ISO8601;
 import com.example.adam.pubtrans.utils.PTVConstants;
+
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * Created by Adam on 28/05/2015.
@@ -39,7 +48,20 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
         mBroadNextDeparturesResults = broadNextDeparturesResult;
         transportType.setText(mBroadNextDeparturesResults.platform.direction.directionName);
         locationName.setText(mBroadNextDeparturesResults.run.destinationName);
-        timeTimeTableUTC.setText(mBroadNextDeparturesResults.timeTimeTableUTC);
+
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.US);
+        Date now = new Date();
+        try{
+            Calendar scheduled = ISO8601.toCalendar(mBroadNextDeparturesResults.timeTimeTableUTC);
+            sdf.setTimeZone(scheduled.getTimeZone());
+            sdf.format(scheduled.getTime());
+            long difference = scheduled.getTime().getTime()-now.getTime();
+            timeTimeTableUTC.setText(sdf.format(scheduled.getTime()) + " (" + ISO8601.convertToTimeContext(difference) + ")");
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         imageView.setImageResource(R.mipmap.ic_launcher);
     }
 
