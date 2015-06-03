@@ -15,12 +15,15 @@ import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.StopsListFragment;
+import com.example.adam.pubtrans.fragments.ValuesListFragment;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.models.Values;
+import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -44,6 +47,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     Location mLastLocation;
     FragmentManager fragmentManager;
     ArrayList<Stop> stopsList;
+    ArrayList<Values> valuesList;
 
     private ArrayList<Marker> markerArrayList;
     ArrayList<Fragment> fragments;
@@ -56,8 +60,10 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        stopsList = new ArrayList<>();
         setContentView(R.layout.tertiary_activity);
+
+        stopsList = new ArrayList<>();
+        valuesList = new ArrayList<>();
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
@@ -101,7 +107,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
         List<Fragment> fList = new ArrayList<>();
 
         fList.add(SupportMapFragment.newInstance());
-        fList.add(StopsListFragment.newInstance("Fragment 2"));
+        fList.add(ValuesListFragment.newInstance("Fragment 2"));
 
         return fList;
 
@@ -135,7 +141,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
             try {
                 Bundle bundle = getIntent().getExtras();
                 try {
-                    WebApi.getStopsOnALine(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.LINE_ID), this);
+                    WebApi.getStoppingPattern(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.RUN_ID), bundle.getInt(PTVConstants.STOP_ID), this);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -189,6 +195,9 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     public ArrayList<Stop> getStopsList() {
         return stopsList;
     }
+    public ArrayList<Values> getValuesList() {
+        return valuesList;
+    }
 
     public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
 
@@ -214,6 +223,23 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
                 for(Stop object: stopResults){
                     LatLng loc = new LatLng(object.latitude, object.longitude);
                     markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
+                    if(googleMap != null){
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
+                    }
+                }
+            }
+        });
+    }
+    public void valuesResponse(ArrayList<Values> valuesResults) {
+        this.valuesList = valuesResults;
+        runOnUiThread(new Runnable()
+        {
+            public void run()
+            {
+                ((IResults) fragments.get(1)).setResults(valuesList);
+                for(Values object: valuesList){
+                    LatLng loc = new LatLng(object.platform.stop.latitude, object.platform.stop.longitude);
+                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName + " " + DateUtils.convertToContext(object.timeTable, true))));
                     if(googleMap != null){
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
                     }

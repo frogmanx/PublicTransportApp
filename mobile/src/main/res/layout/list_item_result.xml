@@ -41,6 +41,13 @@
         android:layout_toRightOf="@+id/image"
         android:layout_below="@+id/transport_type"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time2"
+        android:layout_toRightOf="@+id/image"
+        android:layout_below="@+id/time"
+        />
 
 
 </RelativeLayout>

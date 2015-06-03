@@ -6,6 +6,7 @@ import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.runnables.DisruptionsFetchThread;
 import com.example.adam.pubtrans.runnables.GetBroadNextDeparturesFetchThread;
 import com.example.adam.pubtrans.runnables.GetNearMeFetchThread;
+import com.example.adam.pubtrans.runnables.GetStoppingPatternFetchThread;
 import com.example.adam.pubtrans.runnables.StopsOnLineFetchThread;
 import com.example.adam.pubtrans.secrets.PTVAPIDetails;
 import com.google.android.gms.maps.model.LatLng;
@@ -80,6 +81,12 @@ public class WebApi {
         int mode = getModeId(transportType);
         String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/stop/" + Integer.toString(stopId) + "/departures/by-destination/limit/" + Integer.toString(limit), PTVAPIDetails.USER_ID);
         (new Thread(new GetBroadNextDeparturesFetchThread(url, getBroadNextDeparturesInterface))).start();
+    }
+
+    public static void getStoppingPattern(String transportType, int runId, int stopId, IWebApiResponse getStoppingPatternInterface) throws Exception{
+        int mode = getModeId(transportType);
+        String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/run/" + Integer.toString(runId) + "/stop/" + Integer.toString(stopId) + "/stopping-pattern", PTVAPIDetails.USER_ID);
+        (new Thread(new GetStoppingPatternFetchThread(url, getStoppingPatternInterface))).start();
     }
 
     public static int getModeId(String transportType) {

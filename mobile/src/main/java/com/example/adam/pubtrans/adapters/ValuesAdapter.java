@@ -6,36 +6,37 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.adam.pubtrans.R;
-import com.example.adam.pubtrans.holders.StopsHolder;
+import com.example.adam.pubtrans.holders.BroadNextDeparturesHolder;
 import com.example.adam.pubtrans.holders.ValuesHolder;
-import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
+import com.example.adam.pubtrans.models.Values;
 
 import java.util.ArrayList;
 
 /**
  * Created by Adam on 31/05/2015.
  */
-public class StopsResultAdapter extends RecyclerView.Adapter<StopsHolder> {
-    ArrayList<Stop> mStopResults;
-    public StopsResultAdapter(ArrayList<Stop> stopResults){
-        this.mStopResults = stopResults;
+public class ValuesAdapter extends RecyclerView.Adapter<ValuesHolder> {
+    ArrayList<Values> mValuesResults;
+    public ValuesAdapter(ArrayList<Values> valuesResults){
+        this.mValuesResults = valuesResults;
     }
 
     @Override
-    public StopsHolder onCreateViewHolder(ViewGroup parent, int pos) {
+    public ValuesHolder onCreateViewHolder(ViewGroup parent, int pos) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_result, parent, false);
-        return new StopsHolder(view);
+        return new ValuesHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(StopsHolder holder, int pos) {
-        Stop stopResult = mStopResults.get(pos);
-        holder.bindResult(stopResult);
+    public void onBindViewHolder(ValuesHolder holder, int pos) {
+        Values nearMeResult = mValuesResults.get(pos);
+        holder.bindResult(nearMeResult);
     }
 
     @Override
     public int getItemCount() {
-        return mStopResults.size();
+        return mValuesResults.size();
     }
 
     @Override

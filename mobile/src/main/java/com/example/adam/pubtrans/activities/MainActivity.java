@@ -24,6 +24,7 @@ import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -241,6 +242,10 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     }
 
     public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
+
+    }
+
+    public void valuesResponse(ArrayList<Values> valuesResults) {
 
     }
 }

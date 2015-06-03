@@ -5,6 +5,7 @@ import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.models.Values;
 
 import java.util.ArrayList;
 
@@ -16,4 +17,5 @@ public interface IWebApiResponse {
     public void broadNextDeparturesResponse(ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults);
     public void disruptionsResponse(ArrayList<Disruption> disruptionsResults);
     public void stopsOnLineResponse(ArrayList<Stop> stopsOnLineResults);
+    public void valuesResponse(ArrayList<Values> valuesResults);
 }

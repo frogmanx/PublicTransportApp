@@ -21,21 +21,28 @@ public final class ISO8601 {
     }
 
     public static String convertToTimeContext(long timeDistance) {
-        if(timeDistance < 0) return "is " + Long.toString(Math.abs(timeDistance)) + "ms behind schedule";
+        String endString = "";
+        if(timeDistance < 0) {
+            endString = " behind schedule";
+            timeDistance = Math.abs(timeDistance);
+        }
+        else {
+            endString = " from now";
+        }
         long nextTimeDistance = timeDistance / 1000; //second
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + "ms from now";
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + "ms" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //minute
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " seconds from now";
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " seconds" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //hour
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " minutes from now";
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " minutes" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //days
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " hours from now";
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " hours" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 24; //days
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " days from now";
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " days" + endString;
         return Long.toString(timeDistance);
     }
 

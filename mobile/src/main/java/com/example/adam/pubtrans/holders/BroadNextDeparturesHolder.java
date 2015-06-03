@@ -11,6 +11,7 @@ import com.example.adam.pubtrans.activities.SecondaryActivity;
 import com.example.adam.pubtrans.activities.TertiaryActivity;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ISO8601;
 import com.example.adam.pubtrans.utils.PTVConstants;
 
@@ -32,6 +33,7 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
     TextView transportType;
     TextView locationName;
     TextView timeTimeTableUTC;
+    TextView realTimeTableUTC;
     ImageView imageView;
     private BroadNextDeparturesResult mBroadNextDeparturesResults;
 
@@ -41,6 +43,7 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
         transportType = (TextView) itemView.findViewById(R.id.transport_type);
         locationName = (TextView) itemView.findViewById(R.id.location_name);
         timeTimeTableUTC = (TextView) itemView.findViewById(R.id.time);
+        realTimeTableUTC = (TextView) itemView.findViewById(R.id.time2);
         imageView = (ImageView)itemView.findViewById(R.id.image);
     }
 
@@ -49,17 +52,11 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
         transportType.setText(mBroadNextDeparturesResults.platform.direction.directionName);
         locationName.setText(mBroadNextDeparturesResults.run.destinationName);
 
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.US);
-        Date now = new Date();
-        try{
-            Calendar scheduled = ISO8601.toCalendar(mBroadNextDeparturesResults.timeTimeTableUTC);
-            sdf.setTimeZone(scheduled.getTimeZone());
-            sdf.format(scheduled.getTime());
-            long difference = scheduled.getTime().getTime()-now.getTime();
-            timeTimeTableUTC.setText(sdf.format(scheduled.getTime()) + " (" + ISO8601.convertToTimeContext(difference) + ")");
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
+        timeTimeTableUTC.setText(DateUtils.convertToContext(mBroadNextDeparturesResults.timeTimeTableUTC, false));
+
+        if(mBroadNextDeparturesResults.timeRealTimeUTC!=null) {
+            realTimeTableUTC.setText(DateUtils.convertToContext(mBroadNextDeparturesResults.timeRealTimeUTC, false));
+
         }
 
         imageView.setImageResource(R.mipmap.ic_launcher);
@@ -69,7 +66,8 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
     public void onClick(View v) {
         Intent intent = new Intent(v.getContext(), TertiaryActivity.class);
         intent.putExtra(PTVConstants.TRANSPORT_TYPE, mBroadNextDeparturesResults.platform.stop.transportType);
-        intent.putExtra(PTVConstants.LINE_ID, mBroadNextDeparturesResults.platform.direction.line.lineId);
+        intent.putExtra(PTVConstants.STOP_ID, mBroadNextDeparturesResults.platform.stop.stopId);
+        intent.putExtra(PTVConstants.RUN_ID, mBroadNextDeparturesResults.run.runId);
         v.getContext().startActivity(intent);
     }
 

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.interfaces.IResults;
@@ -36,7 +37,7 @@ public class SecondaryActivity extends FragmentActivity implements IWebApiRespon
 
         Bundle bundle = getIntent().getExtras();
         try {
-            WebApi.getBroadNextDepatures(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.STOP_ID),0,this);
+            WebApi.getBroadNextDepatures(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.STOP_ID),5,this);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -107,6 +108,10 @@ public class SecondaryActivity extends FragmentActivity implements IWebApiRespon
     }
 
     public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
+
+    }
+
+    public void valuesResponse(ArrayList<Values> valuesResults) {
 
     }
 

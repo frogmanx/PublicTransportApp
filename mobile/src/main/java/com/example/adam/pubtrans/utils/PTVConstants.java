@@ -8,4 +8,5 @@ public class PTVConstants {
     public final static String STOP_ID = "stopId";
     public final static String LIMIT = "limit";
     public final static String LINE_ID = "lineId";
+    public final static String RUN_ID = "runId";
 }
