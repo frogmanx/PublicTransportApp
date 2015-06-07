@@ -9,4 +9,8 @@ public class PTVConstants {
     public final static String LIMIT = "limit";
     public final static String LINE_ID = "lineId";
     public final static String RUN_ID = "runId";
+    public final static String TRAIN_TYPE = "train";
+    public final static String TRAM_TYPE = "tram";
+    public final static String BUS_TYPE = "bus";
+    public final static String NIGHTRIDER_TYPE = "nightrider";
 }

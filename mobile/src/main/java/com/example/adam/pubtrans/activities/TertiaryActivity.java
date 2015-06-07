@@ -48,6 +48,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     FragmentManager fragmentManager;
     ArrayList<Stop> stopsList;
     ArrayList<Values> valuesList;
+    public static double THRESHOLD = 240000;
 
     private ArrayList<Marker> markerArrayList;
     ArrayList<Fragment> fragments;
@@ -137,7 +138,6 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             try {
                 Bundle bundle = getIntent().getExtras();
                 try {
@@ -175,13 +175,13 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
+            Fragment fragment = fragments.get(1);
             if(fragment!=null) {
                 ((IResults) fragment).refresh();
             }
             Bundle bundle = getIntent().getExtras();
             try {
-                WebApi.getStopsOnALine(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.LINE_ID), this);
+                WebApi.getStoppingPattern(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.RUN_ID), bundle.getInt(PTVConstants.STOP_ID), this);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -220,6 +220,10 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
             public void run()
             {
                 ((IResults) fragments.get(1)).setResults(stopResults);
+                if(stopResults!=null && stopResults.size() > 1 ) {
+                    googleMap.clear();
+                    markerArrayList.clear();
+                }
                 for(Stop object: stopResults){
                     LatLng loc = new LatLng(object.latitude, object.longitude);
                     markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
@@ -230,16 +234,26 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
             }
         });
     }
-    public void valuesResponse(ArrayList<Values> valuesResults) {
+    public void valuesResponse(final ArrayList<Values> valuesResults) {
         this.valuesList = valuesResults;
         runOnUiThread(new Runnable()
         {
             public void run()
             {
                 ((IResults) fragments.get(1)).setResults(valuesList);
+                if(valuesResults!=null && valuesResults.size() > 1 ) {
+                    googleMap.clear();
+                    markerArrayList.clear();
+                }
                 for(Values object: valuesList){
                     LatLng loc = new LatLng(object.platform.stop.latitude, object.platform.stop.longitude);
-                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName + " " + DateUtils.convertToContext(object.timeTable, true))));
+                    if(!object.realTime.contentEquals("null")) {
+                        float y = DateUtils.getAlphaFromTime(object.realTime, THRESHOLD);
+                        markerArrayList.add(googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false))));
+                    }
+                    else {
+                        markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).snippet("T " + DateUtils.convertToContext(object.timeTable, false))));
+                    }
                     if(googleMap != null){
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
                     }

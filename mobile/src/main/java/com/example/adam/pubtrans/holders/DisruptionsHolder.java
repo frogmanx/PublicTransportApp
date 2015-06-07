@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.holders;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,6 +11,7 @@ import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
+import com.example.adam.pubtrans.utils.ImageUtils;
 
 /**
  * Created by Adam on 28/05/2015.
@@ -37,11 +40,15 @@ public class DisruptionsHolder extends RecyclerView.ViewHolder implements View.O
         transportType.setText(mDisruptionsResult.title);
         locationName.setText(mDisruptionsResult.type);
         timeTimeTableUTC.setText(mDisruptionsResult.description);
-        imageView.setImageResource(R.mipmap.ic_launcher);
+
+
+        imageView.setImageResource(ImageUtils.getTransportImageResource(this.mDisruptionsResult.type));
     }
 
     @Override
     public void onClick(View v) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mDisruptionsResult.url));
+        v.getContext().startActivity(browserIntent);
     }
 
 

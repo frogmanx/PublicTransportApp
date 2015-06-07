@@ -12,6 +12,7 @@ import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ISO8601;
+import com.example.adam.pubtrans.utils.ImageUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,12 +50,13 @@ public class ValuesHolder extends RecyclerView.ViewHolder implements View.OnClic
         this.values = values;
         transportType.setText(this.values.platform.stop.locationName);
         locationName.setText(this.values.run.destinationName);
-        imageView.setImageResource(R.mipmap.ic_launcher);
+        imageView.setImageResource(ImageUtils.getTransportImageResource(this.values.run.transportType));
         Log.e("ValuesHolder" , this.values.timeTable);
-        timeTimeTableUTC.setText(DateUtils.convertToContext(this.values.timeTable, true));
+
 
         if(values.timeTable!=null) {
-            realTimeTableUTC.setText(DateUtils.convertToContext(this.values.realTime, true));
+            timeTimeTableUTC.setText(DateUtils.convertToContext(this.values.realTime, false));
+            realTimeTableUTC.setText(DateUtils.convertToContext(this.values.timeTable, this.values.realTime, false));
         }
     }
 

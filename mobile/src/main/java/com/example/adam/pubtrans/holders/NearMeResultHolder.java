@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.SecondaryActivity;
@@ -33,9 +34,10 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
 
     public void bindResult(NearMeResult nearMeResult) {
         mNearMeResult = nearMeResult;
-        transportType.setText(mNearMeResult.transportType);
-        locationName.setText(mNearMeResult.locationName);
-        imageView.setImageResource(R.mipmap.ic_launcher);
+        transportType.setText(mNearMeResult.locationName);
+
+
+        imageView.setImageResource(ImageUtils.getTransportImageResource(this.mNearMeResult.transportType));
     }
 
     @Override

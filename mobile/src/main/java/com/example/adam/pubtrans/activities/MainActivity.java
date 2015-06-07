@@ -1,6 +1,7 @@
 package com.example.adam.pubtrans.activities;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
@@ -67,6 +68,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         nearMeResults = new ArrayList<>();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
+
+
 
 
         MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);

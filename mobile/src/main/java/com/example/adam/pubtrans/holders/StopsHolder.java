@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.utils.ImageUtils;
 
 /**
  * Created by Adam on 28/05/2015.
@@ -28,7 +29,8 @@ public class StopsHolder extends RecyclerView.ViewHolder implements View.OnClick
         transportType = (TextView) itemView.findViewById(R.id.transport_type);
         locationName = (TextView) itemView.findViewById(R.id.location_name);
         timeTimeTableUTC = (TextView) itemView.findViewById(R.id.time);
-        imageView = (ImageView)itemView.findViewById(R.id.image);
+
+        imageView.setImageResource(ImageUtils.getTransportImageResource(this.stop.transportType));
     }
 
     public void bindResult(Stop stop) {

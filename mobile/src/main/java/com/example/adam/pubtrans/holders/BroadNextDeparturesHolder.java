@@ -13,6 +13,7 @@ import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ISO8601;
+import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 
 import java.text.ParseException;
@@ -59,7 +60,7 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
 
         }
 
-        imageView.setImageResource(R.mipmap.ic_launcher);
+        imageView.setImageResource(ImageUtils.getTransportImageResource(this.mBroadNextDeparturesResults.run.transportType));
     }
 
     @Override

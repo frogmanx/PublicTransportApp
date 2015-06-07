@@ -74,14 +74,16 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
     }
 
     public void setResults(ArrayList<BroadNextDeparturesResult> results) {
+
         View v = getView();
         if(v!=null) {
             this.results.clear();
             this.results.addAll(results);
             mAdapter.notifyDataSetChanged();
-            RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
-            pageLoading.setVisibility(View.GONE);
+
         }
+        RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
+        pageLoading.setVisibility(View.GONE);
 
     }
 }

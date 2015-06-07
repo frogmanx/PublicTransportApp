@@ -92,10 +92,10 @@ public class WebApi {
     public static int getModeId(String transportType) {
         int mode;
         switch(transportType) {
-            case "train": mode = 0; break;
-            case "tram": mode = 1; break;
-            case "bus": mode = 2; break;
-            case "nightrider": mode = 4; break;
+            case PTVConstants.TRAIN_TYPE: mode = 0; break;
+            case PTVConstants.TRAM_TYPE: mode = 1; break;
+            case PTVConstants.BUS_TYPE: mode = 2; break;
+            case PTVConstants.NIGHTRIDER_TYPE: mode = 4; break;
             default: mode = 3; break;
         }
         return mode;
