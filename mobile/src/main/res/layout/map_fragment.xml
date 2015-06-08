@@ -7,27 +7,10 @@
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapview"
-        android:layout_width="100dip"
-        android:layout_height="100dip"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_marginRight="15dp" >
-    </com.google.android.gms.maps.MapView>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"/>
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:text="Button" />
+    <include layout="@layout/filter_fab"/>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/button1"
-        android:layout_marginBottom="133dp"
-        android:text="TextView" />
 </RelativeLayout>

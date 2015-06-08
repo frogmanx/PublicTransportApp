@@ -9,5 +9,6 @@ import java.util.ArrayList;
  */
 public interface IResults<T> {
     public void setResults(ArrayList<T> results);
+    public void reloadResults();
     public void refresh();
 }

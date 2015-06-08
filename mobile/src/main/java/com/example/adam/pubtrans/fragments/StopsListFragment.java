@@ -72,6 +72,9 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
         }
 
     }
+    public void reloadResults() {
+
+    }
 
     public void setResults(ArrayList<Stop> results) {
         this.results.clear();

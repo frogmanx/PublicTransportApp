@@ -73,6 +73,10 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
 
     }
 
+    public void reloadResults() {
+
+    }
+
     public void setResults(ArrayList<BroadNextDeparturesResult> results) {
 
         View v = getView();

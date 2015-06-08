@@ -24,17 +24,20 @@ import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.DateUtils;
+import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.androidmapsextensions.GoogleMap;
+import com.androidmapsextensions.OnMapReadyCallback;
+import com.androidmapsextensions.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.androidmapsextensions.Marker;
+import com.androidmapsextensions.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +98,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
 
 
 
-        ((SupportMapFragment)fragments.get(0)).getMapAsync(this);
+        ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -125,11 +128,8 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
 
     @Override
     public void onMapReady(GoogleMap map) {
-        googleMap = ((SupportMapFragment)fragments.get(0)).getMap();
+        googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
         googleMap.setMyLocationEnabled(true);
-        map.addMarker(new MarkerOptions()
-                .position(new LatLng(-37.82392, 144.9462017))
-                .title("Hello world"));
     }
 
 
@@ -226,7 +226,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
                 }
                 for(Stop object: stopResults){
                     LatLng loc = new LatLng(object.latitude, object.longitude);
-                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
+                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType).icon(ImageUtils.getTransportPinDescriptor(object.transportType))));
                     if(googleMap != null){
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
                     }
@@ -245,18 +245,34 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
                     googleMap.clear();
                     markerArrayList.clear();
                 }
+
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 for(Values object: valuesList){
                     LatLng loc = new LatLng(object.platform.stop.latitude, object.platform.stop.longitude);
+                    Marker marker;
                     if(!object.realTime.contentEquals("null")) {
                         float y = DateUtils.getAlphaFromTime(object.realTime, THRESHOLD);
-                        markerArrayList.add(googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false))));
+                        marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                        markerArrayList.add(marker);
                     }
                     else {
-                        markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).snippet("T " + DateUtils.convertToContext(object.timeTable, false))));
+                        marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
+                        markerArrayList.add(marker);
                     }
-                    if(googleMap != null){
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
+                    builder.include(marker.getPosition());
+                    try {
+                        if(googleMap != null) {
+                            LatLngBounds bounds = builder.build();
+                            int padding = 10; // offset from edges of the map in pixels
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                            googleMap.animateCamera(cu);
+                        }
+
+                    }catch (IllegalStateException e) {
+                        e.printStackTrace();
                     }
+
+
                 }
             }
         });

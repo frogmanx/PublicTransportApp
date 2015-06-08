@@ -1,48 +1,64 @@
 package com.example.adam.pubtrans.activities;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
+import com.example.adam.pubtrans.adapters.DrawerListAdapter;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
+import com.example.adam.pubtrans.models.NavItem;
+import com.example.adam.pubtrans.utils.ImageUtils;
+import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
+import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.androidmapsextensions.GoogleMap;
+import com.androidmapsextensions.OnMapReadyCallback;
+import com.androidmapsextensions.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.androidmapsextensions.Marker;
+import com.androidmapsextensions.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class MainActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private RecyclerView mRecyclerView;
@@ -50,6 +66,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     private RecyclerView.LayoutManager mLayoutManager;
     ArrayList<NearMeResult> nearMeResults;
     ArrayList<Disruption>  disruptionsResults;
+    ArrayList<NearMeResult> filteredResults;
 
     private ArrayList<Marker> markerArrayList;
     ArrayList<Fragment> fragments;
@@ -57,23 +74,77 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     public final static String TAG = "MainActivity";
     ViewPager mViewPager;
     SlidingTabLayout tabs;
+    private ArrayList<String> filter;
+    private boolean firstLoad;
+
+    ListView mDrawerList;
+    RelativeLayout mDrawerPane;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+
+    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        firstLoad = true;
         disruptionsResults = new ArrayList<>();
         nearMeResults = new ArrayList<>();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
+        filter = new ArrayList<String>();
+
+        filter.add("train");
+        filter.add("tram");
+        filter.add("bus");
+
+        mNavItems.add(new NavItem("Home", "Meetup destination", R.drawable.ic_action));
+        mNavItems.add(new NavItem("Preferences", "Change your preferences", R.drawable.ic_action));
+        mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.ic_action));
+
+        // DrawerLayout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
+        // Populate the Navigtion Drawer with options
+        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
+        mDrawerList.setAdapter(adapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItemFromDrawer(position);
+            }
+        });
+
+        filteredResults = new ArrayList<>();
 
 
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
 
+                invalidateOptionsMenu();
+            }
 
-        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(adapter);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                Log.d(TAG, "onDrawerClosed: " + getTitle());
+
+                invalidateOptionsMenu();
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+        mViewPager.setAdapter(fragmentPagerAdapter);
 
         // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -91,8 +162,20 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         tabs.setViewPager(mViewPager);
 
 
+        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+
+        fab1.setOnClickListener(this);
+        fab2.setOnClickListener(this);
+        fab3.setOnClickListener(this);
+
+        fab1.setSelected(true);
+        fab2.setSelected(true);
+        fab3.setSelected(true);
+
         markerArrayList = new ArrayList<>();
-        ((SupportMapFragment)fragments.get(0)).getMapAsync(this);
+        ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
         buildGoogleApiClient();
 
         try {
@@ -101,6 +184,27 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         }catch (Exception e) {
             e.printStackTrace();
         }
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    /*
+* Called when a particular item from the navigation drawer
+* is selected.
+* */
+    private void selectItemFromDrawer(int position) {
+        Fragment fragment = new NearMeListFragment();
+
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(0, fragment)
+                .commit();
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mNavItems.get(position).title);
+
+        // Close the drawer
+        mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
 
@@ -120,17 +224,15 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         return disruptionsResults;
     }
     public ArrayList<NearMeResult> getNearMeResults() {
-        return nearMeResults;
+        return filteredResults;
     }
 
 
     @Override
     public void onMapReady(GoogleMap map) {
-        googleMap = ((SupportMapFragment)fragments.get(0)).getMap();
+        googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
+        googleMap.setOnInfoWindowClickListener(this);
         googleMap.setMyLocationEnabled(true);
-        map.addMarker(new MarkerOptions()
-                .position(new LatLng(-37.82392, 144.9462017))
-                .title("Hello world"));
     }
 
 
@@ -152,6 +254,27 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_refresh) {
+            Fragment fragment = fragments.get(1);
+            if(fragment!=null) {
+                ((IResults) fragment).refresh();
+            }
+            if (mLastLocation != null) {
+                LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                try {
+                    WebApi.getNearMe(loc, this);
+                }
+                catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
+            }
+            return true;
+        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -215,14 +338,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
             public void run()
             {
-                ((IResults) fragments.get(1)).setResults(nearMeResults);
-                for(NearMeResult object: nearMeResults){
-                    LatLng loc = new LatLng(object.latitude, object.longitude);
-                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType)));
-                    if(googleMap != null){
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-                    }
-                }
+                filterResults();
             }
         });
 
@@ -251,4 +367,79 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     public void valuesResponse(ArrayList<Values> valuesResults) {
 
     }
+
+    public void onClick(View v) {
+        if(v instanceof FloatingActionButton) {
+            FloatingActionButton fab = (FloatingActionButton) v;
+            fab.setSelected(!fab.isSelected());
+            if(fab.isSelected()) {
+                if(!filter.contains((String) fab.getTag())) {
+                    filter.add((String)fab.getTag());
+                }
+            }
+            else {
+                if(filter.contains((String)fab.getTag())) {
+                    filter.remove((String)fab.getTag());
+                }
+            }
+            filterResults();
+        }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Intent intent = new Intent(this, SecondaryActivity.class);
+        NearMeResult nearMeResult = marker.getData();
+        intent.putExtra(PTVConstants.TRANSPORT_TYPE, nearMeResult.transportType);
+        intent.putExtra(PTVConstants.STOP_ID, nearMeResult.stopId);
+        startActivity(intent);
+    }
+
+    public void filterResults() {
+        if(filteredResults==null) {
+
+            filteredResults = new ArrayList<>();
+        }
+        filteredResults.clear();
+        markerArrayList.clear();
+        googleMap.clear();
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for(NearMeResult result : nearMeResults) {
+            if (filter.contains(result.transportType)) {
+                filteredResults.add(result);
+                LatLng loc = new LatLng(result.latitude, result.longitude);
+                Marker marker= googleMap.addMarker(new MarkerOptions().position(loc).title(result.locationName + " " + result.transportType).snippet(result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.transportType)));
+                marker.setData(result);
+                builder.include(marker.getPosition());
+
+                markerArrayList.add(marker);
+            }
+        }
+        Log.e("MainActivity", Integer.toString(filteredResults.size()));
+        ((IResults<NearMeResult>) fragments.get(1)).setResults((ArrayList<NearMeResult>) filteredResults.clone());
+        if(firstLoad) {
+            try {
+                LatLngBounds bounds = builder.build();
+                int padding = 10; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                googleMap.animateCamera(cu);
+                firstLoad = false;
+            }catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
 }

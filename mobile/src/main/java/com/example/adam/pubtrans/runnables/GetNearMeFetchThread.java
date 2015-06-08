@@ -28,7 +28,9 @@ public class GetNearMeFetchThread implements Runnable {
 
 
         try {
-            JSONArray jsonArray = new JSONArray(HttpUtils.httpGet(mUrl));
+            String response = HttpUtils.httpGet(mUrl);
+            Log.e("GetNearMeFetchThread", response);
+            JSONArray jsonArray = new JSONArray(response);
             ArrayList<NearMeResult> resultArrayList = new ArrayList<>();
             for(int i = 0; i < jsonArray.length(); i++) {
                 resultArrayList.add(new NearMeResult(jsonArray.getJSONObject(i)));

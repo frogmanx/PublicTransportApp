@@ -72,6 +72,10 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
 
     }
 
+    public void reloadResults() {
+
+    }
+
     public void setResults(ArrayList<Disruption> results) {
         View v = getView();
         if(v!=null) {

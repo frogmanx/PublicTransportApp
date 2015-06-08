@@ -72,6 +72,10 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
 
     }
 
+    public void reloadResults() {
+
+    }
+
     public void setResults(ArrayList<Values> results) {
         this.results.clear();
         this.results.addAll(results);

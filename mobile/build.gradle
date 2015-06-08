@@ -30,6 +30,7 @@ dependencies {
     compile 'com.github.clans:fab:1.5.0'
     compile 'com.nineoldandroids:library:2.+'
     compile 'com.android.support:support-v4:22.+'
+    compile 'com.androidmapsextensions:android-maps-extensions:2.2.0'
     compile "com.android.support:support-v13:22.0.+"
     compile 'it.neokree:MaterialTabs:0.11'
 
