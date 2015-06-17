@@ -93,6 +93,12 @@ public class WebApi {
         (new Thread(new GetBroadNextDeparturesFetchThread(url, getBroadNextDeparturesInterface))).start();
     }
 
+    public static void getSpecificNextDepatures(String transportType, int lineId, int stopId, int directionId, int limit, IWebApiResponse getBroadNextDeparturesInterface) throws Exception{
+        int mode = getModeId(transportType);
+        String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/line/" + Integer.toString(lineId) + "/stop/" + Integer.toString(stopId) +"/directionid/" + Integer.toString(directionId) + "/departures/all/limit/" + Integer.toString(limit), PTVAPIDetails.USER_ID);
+        (new Thread(new GetBroadNextDeparturesFetchThread(url, getBroadNextDeparturesInterface))).start();
+    }
+
     public static void getStoppingPattern(String transportType, int runId, int stopId, IWebApiResponse getStoppingPatternInterface) throws Exception{
         int mode = getModeId(transportType);
         String url = buildTTAPIURL(PTVAPIDetails.BASE_URL, PTVAPIDetails.API_KEY, "/v2/mode/" + Integer.toString(mode) + "/run/" + Integer.toString(runId) + "/stop/" + Integer.toString(stopId) + "/stopping-pattern", PTVAPIDetails.USER_ID);
