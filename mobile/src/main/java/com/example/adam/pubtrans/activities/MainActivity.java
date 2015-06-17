@@ -27,6 +27,8 @@ import com.example.adam.pubtrans.adapters.DrawerListAdapter;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
+import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
+import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
@@ -58,7 +60,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends FragmentActivity  implements OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity  implements IPubActivity, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private RecyclerView mRecyclerView;
@@ -89,6 +91,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Near me");
         firstLoad = true;
         disruptionsResults = new ArrayList<>();
         nearMeResults = new ArrayList<>();
@@ -100,9 +103,9 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         filter.add("tram");
         filter.add("bus");
 
-        mNavItems.add(new NavItem("Home", "Meetup destination", R.drawable.ic_action));
-        mNavItems.add(new NavItem("Preferences", "Change your preferences", R.drawable.ic_action));
-        mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.ic_action));
+        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
+        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
+        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -121,9 +124,6 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
             }
         });
 
-        filteredResults = new ArrayList<>();
-
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -140,6 +140,11 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
                 invalidateOptionsMenu();
             }
         };
+
+        filteredResults = new ArrayList<>();
+
+
+
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -193,18 +198,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 * is selected.
 * */
     private void selectItemFromDrawer(int position) {
-        Fragment fragment = new NearMeListFragment();
-
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(0, fragment)
-                .commit();
-
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mNavItems.get(position).title);
-
-        // Close the drawer
-        mDrawerLayout.closeDrawer(mDrawerPane);
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
     }
 
 
@@ -215,6 +210,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         fList.add(SupportMapFragment.newInstance());
         fList.add(NearMeListFragment.newInstance("Fragment 2"));
         fList.add(DisruptionsFragment.newInstance("Fragment 3"));
+        fList.add(TramSimulatorFragment.newInstance("Fragment 4"));
 
         return fList;
 
@@ -233,6 +229,13 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
         googleMap.setOnInfoWindowClickListener(this);
         googleMap.setMyLocationEnabled(true);
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(new LatLng(-37.643099, 144.754956));
+        builder.include(new LatLng(-38.434046, 145.595909));
+        LatLngBounds bounds = builder.build();
+        int padding = 10; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        googleMap.moveCamera(cu);
     }
 
 
@@ -331,6 +334,7 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
     }
 
+    @Override
     public void nearMeResponse(final ArrayList<NearMeResult> nearMeResults) {
         this.nearMeResults = nearMeResults;
         runOnUiThread(new Runnable()
@@ -344,10 +348,8 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
 
     }
 
-    public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResponse) {
 
-    }
-
+    @Override
     public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
         this.disruptionsResults = disruptionsResults;
         runOnUiThread(new Runnable()
@@ -360,13 +362,6 @@ public class MainActivity extends FragmentActivity  implements OnMapReadyCallbac
         });
     }
 
-    public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
-
-    }
-
-    public void valuesResponse(ArrayList<Values> valuesResults) {
-
-    }
 
     public void onClick(View v) {
         if(v instanceof FloatingActionButton) {

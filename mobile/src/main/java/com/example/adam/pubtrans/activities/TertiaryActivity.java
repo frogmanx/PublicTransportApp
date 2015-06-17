@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends FragmentActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
+public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     FragmentManager fragmentManager;
@@ -65,6 +65,7 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tertiary_activity);
+        setTitle("Stopping Pattern");
 
         stopsList = new ArrayList<>();
         valuesList = new ArrayList<>();
@@ -130,6 +131,13 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
     public void onMapReady(GoogleMap map) {
         googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
         googleMap.setMyLocationEnabled(true);
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(new LatLng(-37.643099, 144.754956));
+        builder.include(new LatLng(-38.434046, 145.595909));
+        LatLngBounds bounds = builder.build();
+        int padding = 10; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        googleMap.moveCamera(cu);
     }
 
 
@@ -199,20 +207,8 @@ public class TertiaryActivity extends FragmentActivity implements IWebApiRespons
         return valuesList;
     }
 
-    public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
 
-
-
-    }
-
-    public void nearMeResponse(ArrayList<NearMeResult> nearMeResults) {
-
-    }
-
-    public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
-
-    }
-
+    @Override
     public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
         this.stopsList = stopResults;
         runOnUiThread(new Runnable()

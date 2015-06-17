@@ -18,4 +18,5 @@ public interface IWebApiResponse {
     public void disruptionsResponse(ArrayList<Disruption> disruptionsResults);
     public void stopsOnLineResponse(ArrayList<Stop> stopsOnLineResults);
     public void valuesResponse(ArrayList<Values> valuesResults);
+    public void searchResponse(ArrayList<Values> valuesResults);
 }

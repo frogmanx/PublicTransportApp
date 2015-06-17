@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.MainActivity;
 import com.example.adam.pubtrans.adapters.NearMeResultAdapter;
+import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.github.clans.fab.FloatingActionButton;
@@ -30,6 +31,7 @@ import java.util.Collections;
 public class NearMeListFragment extends Fragment implements IResults<NearMeResult> {
 
     private RecyclerView mRecyclerView;
+    public final static String TAG = "NearMeListFragment";
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<NearMeResult> results;
@@ -60,8 +62,14 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        if(getActivity() instanceof IPubActivity) {
+            results = ((IPubActivity)getActivity()).getNearMeResults();
+        }
+        else {
+            Log.w(TAG, "Activity must implement IPubActivity!");
+        }
 
-        results = ((MainActivity)getActivity()).getNearMeResults();
+
 
 
         mAdapter = new NearMeResultAdapter(results);

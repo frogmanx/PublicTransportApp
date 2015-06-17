@@ -25,14 +25,14 @@ import java.util.ArrayList;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class SecondaryActivity extends FragmentActivity implements IWebApiResponse {
+public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
     FragmentManager fragmentManager;
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.secondary_activity);
-
+        setTitle("Broad Next Departures");
 
 
         Bundle bundle = getIntent().getExtras();
@@ -83,7 +83,7 @@ public class SecondaryActivity extends FragmentActivity implements IWebApiRespon
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
     public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
         runOnUiThread(new Runnable()
         {
@@ -99,21 +99,6 @@ public class SecondaryActivity extends FragmentActivity implements IWebApiRespon
 
     }
 
-    public void nearMeResponse(ArrayList<NearMeResult> nearMeResults) {
-
-    }
-
-    public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
-
-    }
-
-    public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
-
-    }
-
-    public void valuesResponse(ArrayList<Values> valuesResults) {
-
-    }
 
 
 }
