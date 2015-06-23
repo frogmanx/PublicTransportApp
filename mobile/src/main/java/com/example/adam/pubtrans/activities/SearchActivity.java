@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 
 import com.androidmapsextensions.SupportMapFragment;
 import com.example.adam.pubtrans.R;
@@ -63,12 +64,14 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        setSupportActionBar(toolbar);
 
         MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(fragmentPagerAdapter);
 
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
@@ -89,6 +92,12 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
     public ArrayList<NearMeResult> getNearMeResults() {
         return searchResults;
     }
+
+
+    public ArrayList<Disruption> getDisruptionsResults() {
+        return null;
+    }
+
 
 
 

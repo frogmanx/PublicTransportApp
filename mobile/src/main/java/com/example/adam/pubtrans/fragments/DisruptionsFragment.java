@@ -13,6 +13,7 @@ import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.MainActivity;
 import com.example.adam.pubtrans.adapters.BroadNextDepaturesAdapter;
 import com.example.adam.pubtrans.adapters.DisruptionsAdapter;
+import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Disruption;
@@ -55,7 +56,7 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        results = ((MainActivity) getActivity()).getDisruptionsResults();
+        results = ((IPubActivity) getActivity()).getDisruptionsResults();
 
         mAdapter = new DisruptionsAdapter(results);
         mRecyclerView.setAdapter(mAdapter);

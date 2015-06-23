@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +66,8 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tertiary_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        setSupportActionBar(toolbar);
         setTitle("Stopping Pattern");
 
         stopsList = new ArrayList<>();
@@ -101,7 +104,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
         ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fragmentManager = getSupportFragmentManager();
 

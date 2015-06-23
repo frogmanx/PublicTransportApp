@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +61,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends BaseActivity  implements IPubActivity, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements IPubActivity, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private RecyclerView mRecyclerView;
@@ -91,6 +92,10 @@ public class MainActivity extends BaseActivity  implements IPubActivity, OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        setSupportActionBar(toolbar);
+
         setTitle("Near me");
         firstLoad = true;
         disruptionsResults = new ArrayList<>();
@@ -103,9 +108,9 @@ public class MainActivity extends BaseActivity  implements IPubActivity, OnMapRe
         filter.add("tram");
         filter.add("bus");
 
-        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
-        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
-        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_action_search));
+        mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_search_black_48dp));
+        mNavItems.add(new NavItem("Home", "Keep your favourites here", R.drawable.ic_home_black_48dp));
+        mNavItems.add(new NavItem("Disruptions", "Information about affected transport", R.drawable.ic_report_problem_black_48dp));
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -190,7 +195,7 @@ public class MainActivity extends BaseActivity  implements IPubActivity, OnMapRe
             e.printStackTrace();
         }
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /*
@@ -198,8 +203,27 @@ public class MainActivity extends BaseActivity  implements IPubActivity, OnMapRe
 * is selected.
 * */
     private void selectItemFromDrawer(int position) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
+        switch(position) {
+            case 0: {
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                break;
+            }
+
+            case 2: {
+                Intent intent = new Intent(this, DisruptionsActivity.class);
+                startActivity(intent);
+                break;
+
+            }
+
+            default: {
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                break;
+            }
+
+        }
     }
 
 
