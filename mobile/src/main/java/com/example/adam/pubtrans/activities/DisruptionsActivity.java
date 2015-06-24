@@ -1,6 +1,7 @@
 package com.example.adam.pubtrans.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,8 +44,11 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.disruptions);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
         setSupportActionBar(toolbar);
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("Disruptions");
 
         setTitle("Disruptions");
         disruptionsResults = new ArrayList<>();
@@ -54,9 +58,8 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
         MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
        // mViewPager.setAdapter(fragmentPagerAdapter);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.scrollableview);
 
-        mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);

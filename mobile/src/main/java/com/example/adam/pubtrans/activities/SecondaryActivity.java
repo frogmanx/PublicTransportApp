@@ -1,13 +1,21 @@
 package com.example.adam.pubtrans.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
 
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
@@ -27,7 +35,11 @@ import java.util.ArrayList;
  * Created by Adam on 31/05/2015.
  */
 public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
+    public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     FragmentManager fragmentManager;
+    private int drawingStartLocation;
+    LinearLayout contentRoot;
+
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +64,61 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
 
         fragmentManager = getSupportFragmentManager();
 
+        contentRoot = (LinearLayout) findViewById(R.id.contentRoot);
+
+        drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
+        if (savedInstanceState == null) {
+            contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    contentRoot.getViewTreeObserver().removeOnPreDrawListener(this);
+                    startIntroAnimation();
+                    return true;
+                }
+            });
+        }
+
+    }
+
+    private void startIntroAnimation() {
+        contentRoot.setScaleY(0.1f);
+        contentRoot.setPivotY(drawingStartLocation);
+        contentRoot.animate()
+                .scaleY(1)
+                .setDuration(200)
+                .setInterpolator(new AccelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //animateContent();
+                    }
+                })
+                .start();
+    }
+
+    /*private void animateContent() {
+        commentsAdapter.updateItems();
+        llAddComment.animate().translationY(0)
+                .setInterpolator(new DecelerateInterpolator())
+                .setDuration(200)
+                .start();
+    }*/
+
+    @Override
+    public void onBackPressed() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        contentRoot.animate()
+                .translationY(displaymetrics.heightPixels)
+                .setDuration(200)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        SecondaryActivity.super.onBackPressed();
+                        overridePendingTransition(0, 0);
+                    }
+                })
+                .start();
     }
 
 

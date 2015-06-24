@@ -1,6 +1,8 @@
 package com.example.adam.pubtrans.holders;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,7 +48,14 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
         Intent intent = new Intent(v.getContext(), SecondaryActivity.class);
         intent.putExtra(PTVConstants.TRANSPORT_TYPE, mNearMeResult.transportType);
         intent.putExtra(PTVConstants.STOP_ID, mNearMeResult.stopId);
+
+        //Get location on screen for tapped view
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        intent.putExtra(SecondaryActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+
         v.getContext().startActivity(intent);
+        ((AppCompatActivity) v.getContext()).overridePendingTransition(0, 0);
 
     }
 

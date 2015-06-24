@@ -277,10 +277,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, OnMapRea
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.action_refresh) {
             Fragment fragment = fragments.get(1);
             if(fragment!=null) {

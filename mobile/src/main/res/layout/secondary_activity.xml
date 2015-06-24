@@ -11,12 +11,22 @@
     android:layout_alignParentTop="true"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:elevation="4dp"
     android:minHeight="?attr/actionBarSize"
     android:background="?attr/colorPrimary" />
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_below="@+id/my_awesome_toolbar"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
-    android:name="com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment"
-    tools:layout="@layout/fragment_main" android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/my_awesome_toolbar"
+        android:background="@android:color/white"
+        android:id="@+id/contentRoot"
+        android:orientation="vertical">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
+            android:name="com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment"
+            tools:layout="@layout/fragment_main" android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
 </RelativeLayout>
