@@ -19,6 +19,7 @@ import java.util.ArrayList;
  */
 public class BaseActivity extends AppCompatActivity implements IWebApiResponse {
 
+
     public void nearMeResponse(final ArrayList<NearMeResult> nearMeResults) {
 
     }
