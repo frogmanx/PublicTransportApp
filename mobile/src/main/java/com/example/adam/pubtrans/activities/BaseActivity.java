@@ -25,7 +25,6 @@ public class BaseActivity extends AppCompatActivity implements IWebApiResponse {
 
     public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResponse) {
 
-
     }
 
     public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
