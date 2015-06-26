@@ -15,7 +15,6 @@ public class Values {
     public String realTime;
     public String flags;
 
-
     public Values(JSONObject jsonObject)throws JSONException {
         this.platform = new Platform(jsonObject.getJSONObject("platform"));
         this.run = new Run(jsonObject.getJSONObject("run"));
