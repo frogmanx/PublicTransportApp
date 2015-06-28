@@ -1,5 +1,6 @@
 package com.example.adam.pubtrans.fragments;
 
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 
 /**
  * Created by Adam on 31/05/2015.

@@ -45,6 +45,7 @@ import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NavItem;
 import com.example.adam.pubtrans.utils.ImageUtils;
+import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.CameraUpdate;
@@ -91,7 +92,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     SlidingTabLayout tabs;
     private ArrayList<String> filter;
     private boolean firstLoad;
-
+    private boolean mapIsReady = false;
     ListView mDrawerList;
     RelativeLayout mDrawerPane;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -110,6 +111,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         setSupportActionBar(toolbar);
 
         fab = (FloatingActionMenu) findViewById(R.id.menu1);
+
 
         setTitle("Near me");
         firstLoad = true;
@@ -214,9 +216,17 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(mapIsReady) {
+            filterResults();
+        }
+        growFab();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        growFab();
     }
     /*
 * Called when a particular item from the navigation drawer
@@ -283,6 +293,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         int padding = 10; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         googleMap.moveCamera(cu);
+        mapIsReady = true;
     }
 
 
@@ -449,6 +460,13 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
             filteredResults = new ArrayList<>();
         }
         filteredResults.clear();
+        ArrayList<NearMeResult> favourites = SharedPreferencesHelper.getFavouriteStops(this);
+        filteredResults.add(new NearMeResult("Favourites"));
+        if(favourites!=null&&favourites.size()>0) {
+
+            filteredResults.addAll(favourites);
+        }
+        filteredResults.add(new NearMeResult("Stops Nearby"));
         markerArrayList.clear();
         googleMap.clear();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();

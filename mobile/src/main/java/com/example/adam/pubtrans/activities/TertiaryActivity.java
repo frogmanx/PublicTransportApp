@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -342,8 +344,18 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     }
 
     public void onClick(View v) {
+
         cardView.setVisibility(View.INVISIBLE);
         growFab();
+        final Snackbar snackBar = Snackbar.make(fab, "Your feedback has been collected.", Snackbar.LENGTH_LONG);
+        snackBar.setAction("Dismiss", new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                snackBar.dismiss();
+            }
+        });
+        snackBar.show();
     }
 
     @Override
