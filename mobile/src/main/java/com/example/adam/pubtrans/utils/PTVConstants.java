@@ -13,4 +13,5 @@ public class PTVConstants {
     public final static String TRAM_TYPE = "tram";
     public final static String BUS_TYPE = "bus";
     public final static String NIGHTRIDER_TYPE = "nightrider";
+    public final static String JSON_NEARMERESULT = "jsonnearmeresult";
 }

@@ -1,12 +1,16 @@
 package com.example.adam.pubtrans.models;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 /**
  * Created by Adam on 30/05/2015.
  */
-public class NearMeResult {
+public class NearMeResult implements Comparable<Stop>, Serializable {
     public String suburb;
     public String transportType;
     public String locationName;
@@ -26,6 +30,26 @@ public class NearMeResult {
         this.latitude = result.getDouble("lat");
         this.longitude = result.getDouble("lon");
         this.distance = result.getDouble("distance");
+    }
+
+    @Override
+    public int compareTo(Stop other){
+        // compareTo should return < 0 if this is supposed to be
+        // less than other, > 0 if this is supposed to be greater than
+        // other and 0 if they are supposed to be equal
+        if(this.transportType.equals(other.transportType)&&this.stopId==other.stopId) return 0;
+        return -1;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o instanceof NearMeResult) {
+            Log.e("NearMeCompare", this.transportType + " vs " + ((NearMeResult) o).transportType + " and " + this.stopId + " vs " + ((NearMeResult) o).stopId);
+            return (this.transportType.equals(((NearMeResult) o).transportType) && this.stopId == ((NearMeResult) o).stopId);
+        }
+        return false;
     }
 
 }

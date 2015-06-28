@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.SecondaryActivity;
 import com.example.adam.pubtrans.activities.TertiaryActivity;
+import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.utils.DateUtils;
@@ -65,6 +66,7 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
 
     @Override
     public void onClick(View v) {
+        ((IFabAnimate)v.getContext()).shrinkFab();
         Intent intent = new Intent(v.getContext(), TertiaryActivity.class);
         intent.putExtra(PTVConstants.TRANSPORT_TYPE, mBroadNextDeparturesResults.platform.stop.transportType);
         intent.putExtra(PTVConstants.STOP_ID, mBroadNextDeparturesResults.platform.stop.stopId);

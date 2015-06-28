@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,11 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 
+import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.Stop;
@@ -27,18 +32,23 @@ import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
 import com.example.adam.pubtrans.utils.WebApi;
+import com.example.adam.pubtrans.views.SelectableFloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 /**
  * Created by Adam on 31/05/2015.
  */
-public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
+public class SecondaryActivity extends BaseActivity implements IWebApiResponse, View.OnClickListener, IFabAnimate {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     FragmentManager fragmentManager;
     private int drawingStartLocation;
     LinearLayout contentRoot;
+    NearMeResult nearMeResult;
+    SelectableFloatingActionButton favouriteFab;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -50,11 +60,28 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
         setSupportActionBar(toolbar);
 
         setTitle("Broad Next Departures");
+        String jsonNearMeResult = getIntent().getStringExtra(PTVConstants.JSON_NEARMERESULT);
+        Gson gson = new Gson();
 
+        nearMeResult =gson.fromJson(jsonNearMeResult, NearMeResult.class);
 
-        Bundle bundle = getIntent().getExtras();
+        favouriteFab = (SelectableFloatingActionButton) findViewById(R.id.favouriteFab);
+        favouriteFab.setOnClickListener(this);
+        if(SharedPreferencesHelper.isFavouriteStop(this, nearMeResult)) {
+            favouriteFab.setImageResource(R.drawable.star);
+            //favouriteFab.setColorNormal(getResources().getColor(R.color.secondary));
+            //favouriteFab.setColorPressed(getResources().getColor(R.color.secondaryFallback1));
+            //favouriteFab.setColorRipple(getResources().getColor(R.color.secondaryFallback2));
+        }
+        else {
+            favouriteFab.setImageResource(R.drawable.star_outline);
+            //favouriteFab.setColorNormal(getResources().getColor(R.color.primary));
+            //favouriteFab.setColorPressed(getResources().getColor(R.color.primaryDark));
+            //favouriteFab.setColorRipple(getResources().getColor(R.color.primaryLight));
+        }
+
         try {
-            WebApi.getBroadNextDepatures(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.STOP_ID),5,this);
+            WebApi.getBroadNextDepatures(nearMeResult.transportType, nearMeResult.stopId,5,this);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -81,6 +108,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
     }
 
     private void startIntroAnimation() {
+        growFab();
         contentRoot.setScaleY(0.1f);
         contentRoot.setPivotY(drawingStartLocation);
         contentRoot.animate()
@@ -96,6 +124,16 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
                 .start();
     }
 
+    public void shrinkFab() {
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
+        favouriteFab.startAnimation(animScale);
+    }
+
+    public void growFab() {
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_grow);
+        favouriteFab.startAnimation(animScale);
+    }
+
     /*private void animateContent() {
         commentsAdapter.updateItems();
         llAddComment.animate().translationY(0)
@@ -108,6 +146,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
     public void onBackPressed() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        shrinkFab();
         contentRoot.animate()
                 .translationY(displaymetrics.heightPixels)
                 .setDuration(200)
@@ -153,6 +192,45 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.favouriteFab: {
+                if(!isFavouriteStop()) {
+                    setFavouriteCurrentStop();
+                    favouriteFab.setImageResource(R.drawable.star);
+                    //favouriteFab.setColorNormal(getResources().getColor(R.color.secondary));
+                    //favouriteFab.setColorPressed(getResources().getColor(R.color.secondaryFallback1));
+                    //favouriteFab.setColorRipple(getResources().getColor(R.color.secondaryFallback2));
+                }
+                else {
+                    removeFavouriteCurrentStop();
+                    favouriteFab.setImageResource(R.drawable.star_outline);
+                    //favouriteFab.setColorNormal(getResources().getColor(R.color.primary));
+                    //favouriteFab.setColorPressed(getResources().getColor(R.color.primaryDark));
+                    //favouriteFab.setColorRipple(getResources().getColor(R.color.primaryLight));
+                }
+
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    public boolean isFavouriteStop() {
+        return SharedPreferencesHelper.isFavouriteStop(this, nearMeResult);
+    }
+
+    public void setFavouriteCurrentStop() {
+        SharedPreferencesHelper.saveFavouriteStop(this, nearMeResult);
+    }
+
+    public void removeFavouriteCurrentStop() {
+        SharedPreferencesHelper.removeFavouriteStop(this, nearMeResult);
     }
 
     @Override

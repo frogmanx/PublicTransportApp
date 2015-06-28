@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity">
 <android.support.v7.widget.Toolbar
@@ -28,5 +28,18 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
+    <com.example.adam.pubtrans.views.SelectableFloatingActionButton
+        android:id="@+id/favouriteFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:menu_colorNormal="@color/secondary"
+        fab:menu_colorPressed="@color/secondaryFallback1"
+        fab:menu_colorRipple="@color/secondaryFallback2"
+        fab:fab_label="@string/tram"
+        android:src="@drawable/star_outline"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"/>
 
 </RelativeLayout>

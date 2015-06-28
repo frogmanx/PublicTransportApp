@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.activities.SecondaryActivity;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.google.gson.Gson;
 
 /**
  * Created by Adam on 28/05/2015.
@@ -44,10 +47,12 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View v) {
-
+        ((IFabAnimate)v.getContext()).shrinkFab();
         Intent intent = new Intent(v.getContext(), SecondaryActivity.class);
-        intent.putExtra(PTVConstants.TRANSPORT_TYPE, mNearMeResult.transportType);
-        intent.putExtra(PTVConstants.STOP_ID, mNearMeResult.stopId);
+        Gson gson = new Gson();
+        Log.e("NearMeResultHolder", mNearMeResult.locationName);
+        String jsonNearMeResult = gson.toJson(mNearMeResult);
+        intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
 
         //Get location on screen for tapped view
         int[] startingLocation = new int[2];

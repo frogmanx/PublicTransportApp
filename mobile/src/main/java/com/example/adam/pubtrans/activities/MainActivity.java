@@ -1,8 +1,13 @@
 package com.example.adam.pubtrans.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.location.Location;
@@ -17,6 +22,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -29,6 +36,7 @@ import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
+import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
@@ -36,6 +44,7 @@ import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NavItem;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.example.adam.pubtrans.models.Disruption;
@@ -55,13 +64,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.androidmapsextensions.Marker;
 import com.androidmapsextensions.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class MainActivity extends BaseActivity implements IPubActivity, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private RecyclerView mRecyclerView;
@@ -84,6 +94,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, OnMapRea
     RelativeLayout mDrawerPane;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+    FloatingActionMenu fab;
 
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
@@ -95,6 +106,8 @@ public class MainActivity extends BaseActivity implements IPubActivity, OnMapRea
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
+
+        fab = (FloatingActionMenu) findViewById(R.id.menu1);
 
         setTitle("Near me");
         firstLoad = true;
@@ -403,11 +416,15 @@ public class MainActivity extends BaseActivity implements IPubActivity, OnMapRea
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+        shrinkFab();
         Intent intent = new Intent(this, SecondaryActivity.class);
         NearMeResult nearMeResult = marker.getData();
-        intent.putExtra(PTVConstants.TRANSPORT_TYPE, nearMeResult.transportType);
-        intent.putExtra(PTVConstants.STOP_ID, nearMeResult.stopId);
+        Gson gson = new Gson();
+        String jsonNearMeResult = gson.toJson(nearMeResult);
+        intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
         startActivity(intent);
+
+
     }
 
     public void filterResults() {
@@ -456,5 +473,14 @@ public class MainActivity extends BaseActivity implements IPubActivity, OnMapRea
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
+
+    public void shrinkFab() {
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
+        fab.startAnimation(animScale);
+    }
+    public void growFab() {
+
+    }
+
 
 }

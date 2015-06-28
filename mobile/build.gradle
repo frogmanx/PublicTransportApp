@@ -33,6 +33,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:+'
     compile 'com.android.support:recyclerview-v7:22.+'
     compile 'com.android.support:appcompat-v7:22.+'
+    compile 'com.google.code.gson:gson:1.7.2'
     compile 'com.android.support:design:22.+'
     compile 'com.github.clans:fab:1.5.0'
     compile 'com.nineoldandroids:library:2.+'
