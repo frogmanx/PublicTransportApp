@@ -319,6 +319,12 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        if(id == android.R.id.home){
+            // app icon in action bar clicked; goto parent activity.
+            onBackPressed();
+            return true;
+        }
+
 
 
 

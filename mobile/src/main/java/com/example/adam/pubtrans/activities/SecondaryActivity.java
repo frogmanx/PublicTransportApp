@@ -198,6 +198,13 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
             return true;
         }
 
+        if(id == android.R.id.home){
+            // app icon in action bar clicked; goto parent activity.
+            onBackPressed();
+            return true;
+        }
+
+
         return super.onOptionsItemSelected(item);
     }
 
