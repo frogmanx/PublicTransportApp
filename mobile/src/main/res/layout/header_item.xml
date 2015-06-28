@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/list_item"
+    android:id="@+id/header_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:clickable="true"
+    android:elevation="3dp"
     android:focusable="true"
-    android:background="?android:selectableItemBackground"
+    android:background="@drawable/white_to_primary_transition"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ImageView

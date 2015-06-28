@@ -1,6 +1,7 @@
 package com.example.adam.pubtrans.activities;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -33,6 +34,7 @@ import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.DrawerListAdapter;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
+import com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
@@ -211,6 +213,11 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        growFab();
+    }
     /*
 * Called when a particular item from the navigation drawer
 * is selected.
@@ -219,19 +226,22 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         switch(position) {
             case 0: {
                 Intent intent = new Intent(this, SearchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
             }
 
             case 2: {
                 Intent intent = new Intent(this, DisruptionsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
 
             }
 
             default: {
-                Intent intent = new Intent(this, SearchActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
             }
@@ -476,9 +486,17 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
     public void shrinkFab() {
         Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
-        fab.startAnimation(animScale);
+
+        fab.setMenuButtonHideAnimation(animScale);
+        fab.hideMenuButton(true);
     }
+
     public void growFab() {
+
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_grow);
+        fab.setVisibility(View.VISIBLE);
+        fab.setMenuButtonShowAnimation(animScale);
+        fab.showMenuButton(true);
 
     }
 

@@ -21,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 
+import com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment;
 import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
@@ -107,6 +108,10 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
 
     }
 
+    public NearMeResult getSelectedStop() {
+        return nearMeResult;
+    }
+
     private void startIntroAnimation() {
         growFab();
         contentRoot.setScaleY(0.1f);
@@ -119,6 +124,8 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         //animateContent();
+                        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
+                        ((BroadNextDepaturesListFragment) fragment).animateHeader();
                     }
                 })
                 .start();

@@ -44,7 +44,7 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.broad_next_depatures_fragment, container, false);
+        View v = inflater.inflate(R.layout.stop_list_fragment, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes
