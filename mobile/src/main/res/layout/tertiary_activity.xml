@@ -1,8 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".TertiaryActivity">
     <android.support.v7.widget.Toolbar
@@ -14,14 +16,75 @@
 
     <com.example.adam.pubtrans.SlidingTabLayout
         android:id="@+id/tabs"
+        android:layout_below="@+id/my_awesome_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
         android:background="@color/primary"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
+        android:layout_below="@+id/tabs"
         android:layout_height="fill_parent"
         android:layout_width="match_parent">
     </android.support.v4.view.ViewPager>
 
-</LinearLayout>
+    <com.example.adam.pubtrans.views.SelectableFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="revealView"
+        fab:menu_colorNormal="@color/secondary"
+        fab:menu_colorPressed="@color/secondaryFallback1"
+        fab:menu_colorRipple="@color/secondaryFallback2"
+        fab:fab_label="@string/tram"
+        android:src="@drawable/fab_add"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"/>
+    <!-- A CardView that contains a TextView  -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:visibility="invisible"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginLeft="14dp"
+
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        card_view:cardCornerRadius="4dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/flagLate"
+                android:onClick="onClick"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Flag late"/>
+            <Button
+                android:id="@+id/flagEarly"
+                android:onClick="onClick"
+                android:layout_below="@+id/flagLate"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Flag early"/>
+            <Button
+                android:id="@+id/flagDirty"
+                android:onClick="onClick"
+                android:layout_below="@+id/flagEarly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Flag dirty"/>
+            <Button
+                android:id="@+id/flagCrowded"
+                android:onClick="onClick"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/flagDirty"
+                android:text="Flag crowded"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

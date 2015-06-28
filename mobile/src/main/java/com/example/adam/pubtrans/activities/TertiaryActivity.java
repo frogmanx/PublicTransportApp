@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
@@ -7,16 +9,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.StopsListFragment;
 import com.example.adam.pubtrans.fragments.ValuesListFragment;
+import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
@@ -28,6 +36,7 @@ import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
+import com.example.adam.pubtrans.views.SelectableFloatingActionButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -46,7 +55,7 @@ import java.util.List;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback {
+public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     FragmentManager fragmentManager;
@@ -60,6 +69,9 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     public final static String TAG = "MainActivity";
     ViewPager mViewPager;
     SlidingTabLayout tabs;
+    Toolbar bottomToolbar;
+    CardView cardView;
+    SelectableFloatingActionButton fab;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -75,6 +87,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
+
 
 
         MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
@@ -108,6 +121,34 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
         fragmentManager = getSupportFragmentManager();
 
+        cardView = (CardView) findViewById(R.id.card_view);
+
+        fab = (SelectableFloatingActionButton) findViewById(R.id.fab);
+
+        growFab();
+    }
+
+    public void revealView(View view) {
+
+        final View myView = view;
+        int cx = (view.getLeft() + view.getRight()) / 2;
+        int cy = (view.getTop() + view.getBottom()) / 2;
+        float radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
+
+        if (cardView.getVisibility() == View.INVISIBLE) {
+            cardView.setVisibility(View.VISIBLE);
+            ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0, radius).start();
+        } else {
+            Animator reveal = ViewAnimationUtils.createCircularReveal(
+                    cardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    myView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
+        }
     }
 
     private List<Fragment> getFragments(){
@@ -240,6 +281,22 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             }
         });
     }
+
+    public void shrinkView() {
+
+    }
+
+    public void shrinkFab() {
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
+        fab.startAnimation(animScale);
+    }
+
+    public void growFab() {
+        Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_grow);
+        fab.startAnimation(animScale);
+    }
+
+
     public void valuesResponse(final ArrayList<Values> valuesResults) {
         this.valuesList = valuesResults;
         runOnUiThread(new Runnable()
@@ -282,6 +339,22 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                 }
             }
         });
+    }
+
+    public void onClick(View v) {
+        cardView.setVisibility(View.INVISIBLE);
+        growFab();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(cardView.getVisibility()==View.VISIBLE) {
+            cardView.setVisibility(View.INVISIBLE);
+            growFab();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
 }
