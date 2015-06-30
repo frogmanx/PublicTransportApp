@@ -3,6 +3,10 @@ package com.example.adam.pubtrans.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,6 +30,7 @@ import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.StopsListFragment;
 import com.example.adam.pubtrans.fragments.ValuesListFragment;
+import com.example.adam.pubtrans.interfaces.IAddTimer;
 import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.interfaces.IWebApiResponse;
@@ -52,12 +57,13 @@ import com.androidmapsextensions.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate {
+public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     FragmentManager fragmentManager;
@@ -73,7 +79,10 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     SlidingTabLayout tabs;
     Toolbar bottomToolbar;
     CardView cardView;
+    CardView timerCardView;
     SelectableFloatingActionButton fab;
+
+    private Values alarmValues;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -125,6 +134,8 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
         cardView = (CardView) findViewById(R.id.card_view);
 
+        timerCardView = (CardView) findViewById(R.id.timer_card_view);
+
         fab = (SelectableFloatingActionButton) findViewById(R.id.fab);
 
         growFab();
@@ -147,6 +158,29 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     myView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
+        }
+    }
+
+    public void showAddTimerView(View view, Values values) {
+        alarmValues = values;
+        final View myView = view;
+        int cx = (view.getLeft() + view.getRight()) / 2;
+        int cy = (view.getTop() + view.getBottom()) / 2;
+        float radius = Math.max(timerCardView.getWidth(), timerCardView.getHeight()) * 2.0f;
+
+        if (timerCardView.getVisibility() == View.INVISIBLE) {
+            timerCardView.setVisibility(View.VISIBLE);
+            ViewAnimationUtils.createCircularReveal(timerCardView, cx, cy, 0, radius).start();
+        } else {
+            Animator reveal = ViewAnimationUtils.createCircularReveal(
+                    timerCardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    //myView.setVisibility(View.INVISIBLE);
                 }
             });
             reveal.start();
@@ -343,19 +377,44 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         });
     }
 
-    public void onClick(View v) {
 
-        cardView.setVisibility(View.INVISIBLE);
-        growFab();
-        final Snackbar snackBar = Snackbar.make(fab, "Your feedback has been collected.", Snackbar.LENGTH_LONG);
-        snackBar.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                snackBar.dismiss();
-            }
-        });
-        snackBar.show();
+
+    public void onClick(View v) {
+        if(v.getId()==R.id.confirm_timer) {
+            Date alarmTime = DateUtils.convertToDate(alarmValues.realTime);
+
+            AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            // cal.add(Calendar.SECOND, 5);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);
+
+            timerCardView.setVisibility(View.INVISIBLE);
+            //growFab();
+            final Snackbar snackBar = Snackbar.make(fab, "Alarm has been set for ****.", Snackbar.LENGTH_LONG);
+            snackBar.setAction("Dismiss", new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    snackBar.dismiss();
+                }
+            });
+            snackBar.show();
+        }
+        else {
+            cardView.setVisibility(View.INVISIBLE);
+            growFab();
+            final Snackbar snackBar = Snackbar.make(fab, "Your feedback has been collected.", Snackbar.LENGTH_LONG);
+            snackBar.setAction("Dismiss", new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    snackBar.dismiss();
+                }
+            });
+            snackBar.show();
+        }
+
     }
 
     @Override

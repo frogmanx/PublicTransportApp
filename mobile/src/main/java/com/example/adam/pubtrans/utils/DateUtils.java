@@ -65,4 +65,9 @@ public class DateUtils {
 
     }
 
+    public static Date convertToDate(String utcTime) {
+        DateTime dateTime = new DateTime( utcTime, DateTimeZone.getDefault() );
+        return dateTime.toDate();
+    }
+
 }

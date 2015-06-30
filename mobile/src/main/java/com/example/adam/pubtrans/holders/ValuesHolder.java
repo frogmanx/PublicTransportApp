@@ -1,5 +1,6 @@
 package com.example.adam.pubtrans.holders;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.adam.pubtrans.R;
+import com.example.adam.pubtrans.interfaces.IAddTimer;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
@@ -60,8 +62,8 @@ public class ValuesHolder extends RecyclerView.ViewHolder implements View.OnClic
         }
     }
 
-    @Override
     public void onClick(View v) {
+        ((IAddTimer)v.getContext()).showAddTimerView(v, values);
     }
 
 
