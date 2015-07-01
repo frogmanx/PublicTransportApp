@@ -21,6 +21,17 @@ public class ImageUtils {
         return R.mipmap.ic_launcher;
     }
 
+    public static int  getTransportImageResourceWhite(String transportType) {
+        switch(transportType) {
+            case PTVConstants.TRAM_TYPE: return R.drawable.ic_directions_transit_white;
+            case PTVConstants.BUS_TYPE: return R.drawable.ic_directions_bus_white;
+            case PTVConstants.TRAIN_TYPE: return R.drawable.ic_directions_train_white;
+            case PTVConstants.NIGHTRIDER_TYPE: return R.drawable.ic_directions_bus_white;
+
+        }
+        return R.mipmap.ic_launcher;
+    }
+
     public static BitmapDescriptor getTransportPinDescriptor(String transportType) {
 
         switch(transportType) {

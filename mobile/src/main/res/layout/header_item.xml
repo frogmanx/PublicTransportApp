@@ -25,6 +25,7 @@
         android:id="@+id/location_name"
         android:layout_toRightOf="@+id/image"
         android:layout_alignParentTop="true"
+        android:textColor="@android:color/white"
         />
 
     <TextView
@@ -33,6 +34,7 @@
         android:id="@+id/transport_type"
         android:layout_toRightOf="@+id/image"
         android:layout_below="@+id/location_name"
+        android:textColor="@android:color/white"
         />
 
     <TextView
@@ -41,6 +43,7 @@
         android:id="@+id/time"
         android:layout_toRightOf="@+id/image"
         android:layout_below="@+id/transport_type"
+        android:textColor="@android:color/white"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -48,6 +51,7 @@
         android:id="@+id/time2"
         android:layout_toRightOf="@+id/image"
         android:layout_below="@+id/time"
+        android:textColor="@android:color/white"
         />
 
 

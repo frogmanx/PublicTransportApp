@@ -90,7 +90,7 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
 
 
         transportType.setText(mNearMeResult.locationName);
-        imageView.setImageResource(ImageUtils.getTransportImageResource(this.mNearMeResult.transportType));
+        imageView.setImageResource(ImageUtils.getTransportImageResourceWhite(this.mNearMeResult.transportType));
     }
 
     public void refresh() {

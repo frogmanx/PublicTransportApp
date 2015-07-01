@@ -35,7 +35,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(ImageUtils.getTransportImageResource(alarmValues.platform.stop.transportType))
                         .setContentTitle(alarmValues.platform.stop.locationName)
-                        .setContentText("Stop arrived");
+                        .setContentText("Arrived @ Stop");
         Intent stopAlarmIntent = new Intent(context, StopAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, stopAlarmIntent, 0);
         mBuilder.setContentIntent(pendingIntent);
