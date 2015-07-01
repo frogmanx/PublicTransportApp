@@ -45,7 +45,9 @@ public class DateUtils {
     public static long convertToMSAway(String utcTime) {
         DateTime utcDateTime = new DateTime( utcTime, DateTimeZone.getDefault() );
         Date now = new Date();
-        return utcDateTime.toDate().getTime() - now.getTime();
+        Log.e("HERERE2", Long.toString(utcDateTime.toDate().getTime()));
+        Log.e("HERERE3", Long.toString(now.getTime()));
+        return utcDateTime.toDate().getTime()-now.getTime();
     }
 
     public static String convertToContext(String utcTime, String comparisonTime, boolean failTime) {

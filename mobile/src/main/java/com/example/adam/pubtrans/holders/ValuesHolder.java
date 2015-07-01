@@ -56,9 +56,12 @@ public class ValuesHolder extends RecyclerView.ViewHolder implements View.OnClic
         Log.e("ValuesHolder" , this.values.timeTable);
 
 
-        if(values.timeTable!=null) {
+        if(!this.values.realTime.contentEquals("null")) {
             timeTimeTableUTC.setText(DateUtils.convertToContext(this.values.realTime, false));
             realTimeTableUTC.setText(DateUtils.convertToContext(this.values.timeTable, this.values.realTime, false));
+        }
+        else {
+            timeTimeTableUTC.setText(DateUtils.convertToContext(this.values.timeTable, false));
         }
     }
 

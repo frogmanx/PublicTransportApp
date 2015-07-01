@@ -339,17 +339,24 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     public void valuesResponse(final ArrayList<Values> valuesResults) {
         //filter out before time
         ArrayList<Values> myResults = new ArrayList<>();
-        if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null) {
+        if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null&&!valuesResults.get(0).realTime.contentEquals("null")) {
             for(int i = 0; i < valuesResults.size();i++) {
-                double x = DateUtils.convertToMSAway(valuesResults.get(i).realTime);
-                if(x>0) {
-                    myResults.add(valuesResults.get(i));
+                Log.e("HERERER", valuesResults.get(i).realTime);
+                if(valuesResults.get(i).realTime!=null) {
+                    double x = DateUtils.convertToMSAway(valuesResults.get(i).realTime);
+                    Log.e("HERERERE", Double.toString(x));
+                    if(x>0) {
+                        myResults.add(valuesResults.get(i));
+                    }
                 }
+
             }
         }
         else {
             for(int i = 0; i < valuesResults.size();i++) {
+                Log.e("HERERE", valuesResults.get(i).timeTable);
                 double x = DateUtils.convertToMSAway(valuesResults.get(i).timeTable);
+                Log.e("HERERE", Double.toString(x));
                 if(x>0) {
                     myResults.add(valuesResults.get(i));
                 }
