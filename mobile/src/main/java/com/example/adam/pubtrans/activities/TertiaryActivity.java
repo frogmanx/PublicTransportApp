@@ -39,6 +39,7 @@ import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
+import com.example.adam.pubtrans.receivers.AlarmReceiver;
 import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
@@ -55,7 +56,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.androidmapsextensions.Marker;
 import com.androidmapsextensions.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -334,7 +337,26 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
 
     public void valuesResponse(final ArrayList<Values> valuesResults) {
-        this.valuesList = valuesResults;
+        //filter out before time
+        ArrayList<Values> myResults = new ArrayList<>();
+        if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null) {
+            for(int i = 0; i < valuesResults.size();i++) {
+                double x = DateUtils.convertToMSAway(valuesResults.get(i).realTime);
+                if(x>0) {
+                    myResults.add(valuesResults.get(i));
+                }
+            }
+        }
+        else {
+            for(int i = 0; i < valuesResults.size();i++) {
+                double x = DateUtils.convertToMSAway(valuesResults.get(i).timeTable);
+                if(x>0) {
+                    myResults.add(valuesResults.get(i));
+                }
+            }
+        }
+        this.valuesList = myResults;
+
         runOnUiThread(new Runnable()
         {
             public void run()
@@ -351,14 +373,25 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                     Marker marker;
                     if(!object.realTime.contentEquals("null")) {
                         float y = DateUtils.getAlphaFromTime(object.realTime, THRESHOLD);
-                        marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
-                        markerArrayList.add(marker);
+                        double x = DateUtils.convertToMSAway(object.realTime);
+
+                        if(x>0) {
+                           // marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                            marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                            markerArrayList.add(marker);
+                            builder.include(marker.getPosition());
+                        }
+
                     }
                     else {
-                        marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
-                        markerArrayList.add(marker);
+                        double x = DateUtils.convertToMSAway(object.timeTable);
+                        if(x>0) {
+                            marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
+                            markerArrayList.add(marker);
+                            builder.include(marker.getPosition());
+                        }
                     }
-                    builder.include(marker.getPosition());
+
                     try {
                         if(googleMap != null) {
                             LatLngBounds bounds = builder.build();
@@ -381,10 +414,20 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
-            Date alarmTime = DateUtils.convertToDate(alarmValues.realTime);
+            Date alarmTime;
+            if(alarmValues.realTime!=null) {
+                alarmTime = DateUtils.convertToDate(alarmValues.realTime);
+            }
+            else {
+                alarmTime = DateUtils.convertToDate(alarmValues.timeTable);
+            }
+
 
             AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            Gson gson = new Gson();
+            String jsonValues = gson.toJson(alarmValues);
+            intent.putExtra(PTVConstants.JSON_VALUES, jsonValues);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
             // cal.add(Calendar.SECOND, 5);
             alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);

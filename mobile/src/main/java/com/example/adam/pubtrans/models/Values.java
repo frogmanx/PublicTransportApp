@@ -3,12 +3,13 @@ package com.example.adam.pubtrans.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Adam on 3/06/2015.
  */
-public class Values {
+public class Values implements Serializable{
     public Platform platform;
     public Run run;
     public String timeTable;
