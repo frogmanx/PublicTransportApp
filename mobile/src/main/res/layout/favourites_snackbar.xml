@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/favourite_card_view"
+    android:visibility="invisible"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
+    android:layout_width="fill_parent"
+    android:layout_height="100dp"
+    android:clickable="true"
+    android:onClick="acknowledge"
+    card_view:cardCornerRadius="1dp"
+    card_view:cardBackgroundColor="@color/secondary">
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Added to favourites"
+        android:textColor="@color/white"/>
+</android.support.v7.widget.CardView>

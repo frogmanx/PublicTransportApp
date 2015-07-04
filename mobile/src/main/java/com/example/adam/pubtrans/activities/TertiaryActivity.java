@@ -89,6 +89,9 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     CardView timerCardView;
 
     private Values alarmValues;
+    int cx;
+    int cy;
+    float radius;
 
 
     SelectableFloatingActionButton fab;
@@ -157,9 +160,9 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     public void revealView(View view) {
 
         final View myView = view;
-        int cx = (view.getLeft() + view.getRight()) / 2;
-        int cy = (view.getTop() + view.getBottom()) / 2;
-        float radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
+        cx = (view.getLeft() + view.getRight()) / 2;
+        cy = (view.getTop() + view.getBottom()) / 2;
+        radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
 
         if (cardView.getVisibility() == View.INVISIBLE) {
             cardView.setVisibility(View.VISIBLE);
@@ -190,9 +193,9 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
 
         alarmValues = values;
         final View myView = view;
-        int cx = (view.getLeft() + view.getRight()) / 2;
-        int cy = (view.getTop() + view.getBottom()) / 2;
-        float radius = Math.max(timerCardView.getWidth(), timerCardView.getHeight()) * 2.0f;
+        cx = (view.getLeft() + view.getRight()) / 2;
+        cy = (view.getTop() + view.getBottom()) / 2;
+        radius = Math.max(timerCardView.getWidth(), timerCardView.getHeight()) * 2.0f;
 
         if (timerCardView.getVisibility() == View.INVISIBLE) {
             timerCardView.setVisibility(View.VISIBLE);
@@ -442,7 +445,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
             Date alarmTime;
-            if(alarmValues.realTime!=null) {
+            if(!alarmValues.realTime.contentEquals("null")) {
                 alarmTime = DateUtils.convertToDate(alarmValues.realTime);
             }
             else {
@@ -484,11 +487,16 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                 });
                 snackBar.show();
             }
-            timerCardView.setVisibility(View.INVISIBLE);
-            //growFab();
+            Animator reveal = ViewAnimationUtils.createCircularReveal(timerCardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    timerCardView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
         }
         else {
-            cardView.setVisibility(View.INVISIBLE);
             growFab();
             final Snackbar snackBar = Snackbar.make(fab, "Your feedback has been collected.", Snackbar.LENGTH_LONG);
             snackBar.setAction("Dismiss", new View.OnClickListener() {
@@ -499,17 +507,39 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                 }
             });
             snackBar.show();
+            Animator reveal = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    cardView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
         }
     }
 
     @Override
     public void onBackPressed() {
         if(cardView.getVisibility()==View.VISIBLE) {
-            cardView.setVisibility(View.INVISIBLE);
+            Animator reveal = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    cardView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
             growFab();
         }
         else if(timerCardView.getVisibility()==View.VISIBLE) {
-            timerCardView.setVisibility(View.INVISIBLE);
+            Animator reveal = ViewAnimationUtils.createCircularReveal(timerCardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    timerCardView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
         }
         else {
             shrinkFab();

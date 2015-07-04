@@ -42,4 +42,6 @@
         android:layout_marginRight="14dp"
         android:layout_marginBottom="14dp"/>
 
+    <include layout="@layout/favourites_snackbar"/>
+
 </RelativeLayout>

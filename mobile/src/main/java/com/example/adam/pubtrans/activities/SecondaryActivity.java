@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -52,6 +54,11 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
     LinearLayout contentRoot;
     NearMeResult nearMeResult;
     SelectableFloatingActionButton favouriteFab;
+    CardView cardView;
+
+    int cx;
+    int cy;
+    float radius;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -112,6 +119,9 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
+        cardView = (CardView) findViewById(R.id.favourite_card_view);
+        cardView.setCardBackgroundColor(getResources().getColor(R.color.secondary));
+
     }
 
     public NearMeResult getSelectedStop() {
@@ -155,22 +165,45 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
                 .start();
     }*/
 
+    public void shrinkCardView() {
+        Animator reveal = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0);
+        reveal.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                cardView.setVisibility(View.INVISIBLE);
+            }
+        });
+        reveal.start();
+    }
+
+    public void acknowledge(View v) {
+        shrinkCardView();
+        growFab();
+    }
+
     @Override
     public void onBackPressed() {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        shrinkFab();
-        contentRoot.animate()
-                .translationY(displaymetrics.heightPixels)
-                .setDuration(200)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        SecondaryActivity.super.onBackPressed();
-                        overridePendingTransition(0, 0);
-                    }
-                })
-                .start();
+        if(cardView.getVisibility()==View.VISIBLE) {
+            shrinkCardView();
+            growFab();
+        }
+        else {
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            shrinkFab();
+            contentRoot.animate()
+                    .translationY(displaymetrics.heightPixels)
+                    .setDuration(200)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            SecondaryActivity.super.onBackPressed();
+                            overridePendingTransition(0, 0);
+                        }
+                    })
+                    .start();
+        }
+
     }
 
 
@@ -221,6 +254,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
                 if(!isFavouriteStop()) {
                     setFavouriteCurrentStop();
                     favouriteFab.setImageResource(R.drawable.star);
+                    revealView(v);
                     //favouriteFab.setColorNormal(getResources().getColor(R.color.secondary));
                     //favouriteFab.setColorPressed(getResources().getColor(R.color.secondaryFallback1));
                     //favouriteFab.setColorRipple(getResources().getColor(R.color.secondaryFallback2));
@@ -268,6 +302,31 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
 
 
     }
+
+    public void revealView(View view) {
+
+        final View myView = view;
+        cx = (view.getLeft() + view.getRight()) / 2;
+        cy = (view.getTop() + view.getBottom()) / 2;
+        radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
+
+        if (cardView.getVisibility() == View.INVISIBLE) {
+            cardView.setVisibility(View.VISIBLE);
+            ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0, radius).start();
+        } else {
+            Animator reveal = ViewAnimationUtils.createCircularReveal(
+                    cardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    myView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
+        }
+    }
+
+
 
 
 
