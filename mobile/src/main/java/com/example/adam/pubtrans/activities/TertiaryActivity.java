@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
@@ -43,6 +44,7 @@ import com.example.adam.pubtrans.receivers.AlarmReceiver;
 import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
+import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.example.adam.pubtrans.views.SelectableFloatingActionButton;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -168,6 +170,16 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     }
 
     public void showAddTimerView(View view, Values values) {
+
+        Gson gson = new Gson();
+        String jsonValues = gson.toJson(values);
+        if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
+            ((TextView) timerCardView.findViewById(R.id.card_text)).setText("Remove Alarm");
+        }
+        else {
+            ((TextView) timerCardView.findViewById(R.id.card_text)).setText("Activate Alarm");
+        }
+
         alarmValues = values;
         final View myView = view;
         int cx = (view.getLeft() + view.getRight()) / 2;
@@ -428,6 +440,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             else {
                 alarmTime = DateUtils.convertToDate(alarmValues.timeTable);
             }
+            //set pending and add the model to memory for ability to cancel
 
 
             AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -436,20 +449,35 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             String jsonValues = gson.toJson(alarmValues);
             intent.putExtra(PTVConstants.JSON_VALUES, jsonValues);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-            // cal.add(Calendar.SECOND, 5);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);
+            if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
+                SharedPreferencesHelper.removeAlarmJson(this, jsonValues);
+                alarmMgr.cancel(pendingIntent);
+                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been removed for stop " + alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                snackBar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        snackBar.dismiss();
+                    }
+                });
+                snackBar.show();
 
+            }
+            else {
+                SharedPreferencesHelper.saveAlarmJson(jsonValues, this);
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);
+                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been set for stop " +  alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                snackBar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        snackBar.dismiss();
+                    }
+                });
+                snackBar.show();
+            }
             timerCardView.setVisibility(View.INVISIBLE);
             //growFab();
-            final Snackbar snackBar = Snackbar.make(fab, "Alarm has been set for ****.", Snackbar.LENGTH_LONG);
-            snackBar.setAction("Dismiss", new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    snackBar.dismiss();
-                }
-            });
-            snackBar.show();
         }
         else {
             cardView.setVisibility(View.INVISIBLE);
@@ -473,7 +501,11 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             cardView.setVisibility(View.INVISIBLE);
             growFab();
         }
+        else if(timerCardView.getVisibility()==View.VISIBLE) {
+            timerCardView.setVisibility(View.INVISIBLE);
+        }
         else {
+            shrinkFab();
             super.onBackPressed();
         }
     }

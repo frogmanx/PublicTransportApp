@@ -63,6 +63,7 @@
         android:layout_height="fill_parent"
         card_view:cardCornerRadius="4dp">
         <TextView
+            android:id="@+id/card_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
