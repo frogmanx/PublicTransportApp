@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:visibility="invisible"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginRight="14dp"
+    android:layout_marginBottom="14dp"
+    android:layout_marginLeft="14dp"
+    android:layout_width="fill_parent"
+    android:layout_height="200dp"
+    card_view:cardCornerRadius="4dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/flagLate"
+            android:onClick="onClick"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Flag late"/>
+        <Button
+            android:id="@+id/flagEarly"
+            android:onClick="onClick"
+            android:layout_below="@+id/flagLate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Flag early"/>
+        <Button
+            android:id="@+id/flagDirty"
+            android:onClick="onClick"
+            android:layout_below="@+id/flagEarly"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Flag dirty"/>
+        <Button
+            android:id="@+id/flagCrowded"
+            android:onClick="onClick"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/flagDirty"
+            android:text="Flag crowded"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

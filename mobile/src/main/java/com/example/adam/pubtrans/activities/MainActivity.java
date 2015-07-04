@@ -128,6 +128,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_search_black_48dp));
         mNavItems.add(new NavItem("Home", "Keep your favourites here", R.drawable.ic_home_black_48dp));
         mNavItems.add(new NavItem("Disruptions", "Information about affected transport", R.drawable.ic_report_problem_black_48dp));
+        mNavItems.add(new NavItem("Alarms", "View your transport alarms", R.drawable.ic_alarm_black_48dp));
 
         // DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -249,6 +250,13 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
             }
 
+            case 3: {
+                Intent intent = new Intent(this, AlarmsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                break;
+            }
+
             default: {
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -279,6 +287,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     public ArrayList<NearMeResult> getNearMeResults() {
         return filteredResults;
     }
+    public ArrayList<Values> getAlarms() {return null;}
 
 
     @Override

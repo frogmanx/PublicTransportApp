@@ -2,6 +2,7 @@ package com.example.adam.pubtrans.interfaces;
 
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.models.Values;
 
 import java.util.ArrayList;
 
@@ -11,4 +12,5 @@ import java.util.ArrayList;
 public interface IPubActivity {
     public ArrayList<NearMeResult> getNearMeResults();
     public ArrayList<Disruption> getDisruptionsResults();
+    public ArrayList<Values> getAlarms();
 }

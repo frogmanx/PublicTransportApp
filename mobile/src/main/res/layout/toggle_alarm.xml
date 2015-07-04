@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/timer_card_view"
+    android:visibility="invisible"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginRight="14dp"
+    android:layout_marginBottom="14dp"
+    android:layout_marginLeft="14dp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    card_view:cardCornerRadius="4dp">
+    <TextView
+        android:id="@+id/card_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Remove Reminder"/>
+    <Button
+        android:id="@+id/confirm_timer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:text="Confirm"/>
+</android.support.v7.widget.CardView>

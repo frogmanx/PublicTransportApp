@@ -19,6 +19,7 @@ import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.WebApi;
 
 import java.util.ArrayList;
@@ -94,6 +95,9 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
     }
 
     public ArrayList<NearMeResult> getNearMeResults() {
+        return null;
+    }
+    public ArrayList<Values> getAlarms() {
         return null;
     }
 

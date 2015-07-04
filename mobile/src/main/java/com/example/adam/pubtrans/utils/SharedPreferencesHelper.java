@@ -138,4 +138,18 @@ public class SharedPreferencesHelper {
         if(stopArrayList.contains(v)) return true;
         return false;
     }
+
+    public static ArrayList<String> getAlarms(Context c) {
+        SharedPreferences sp = c.getSharedPreferences(SP, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        Type listOfTestObject = new TypeToken<List<String>>(){}.getType();
+        String json = sp.getString(SP_ALARMS_ARRAY_LIST, "");
+        ArrayList<String> alarmsArrayList;
+        if(json.isEmpty()) {
+            return new ArrayList<>();
+        }
+        alarmsArrayList = gson.fromJson(json, listOfTestObject);
+        return alarmsArrayList;
+    }
+
 }

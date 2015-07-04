@@ -7,6 +7,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -85,9 +87,11 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     Toolbar bottomToolbar;
     CardView cardView;
     CardView timerCardView;
-    SelectableFloatingActionButton fab;
 
     private Values alarmValues;
+
+
+    SelectableFloatingActionButton fab;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -140,6 +144,10 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         cardView = (CardView) findViewById(R.id.card_view);
 
         timerCardView = (CardView) findViewById(R.id.timer_card_view);
+
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         fab = (SelectableFloatingActionButton) findViewById(R.id.fab);
 
@@ -492,7 +500,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             });
             snackBar.show();
         }
-
     }
 
     @Override
@@ -509,5 +516,4 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
             super.onBackPressed();
         }
     }
-
 }

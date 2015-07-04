@@ -3,6 +3,9 @@ package com.example.adam.pubtrans.activities;
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.support.v7.widget.SearchView;
@@ -73,6 +77,10 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
 
     }
 
@@ -95,6 +103,9 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
 
 
     public ArrayList<Disruption> getDisruptionsResults() {
+        return null;
+    }
+    public ArrayList<Values> getAlarms() {
         return null;
     }
 
@@ -123,6 +134,8 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+        ((EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text)).setTextColor(Color.WHITE);
+        ((EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text)).setHintTextColor(Color.WHITE);
         searchView.setOnQueryTextListener(this);
 
         return true;

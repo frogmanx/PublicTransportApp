@@ -10,5 +10,6 @@
 
 
     <item name="semiTransparent" type="color">#44999999</item>
+    <item name="white" type="color">#FFFFFF</item>
 
 </resources>
