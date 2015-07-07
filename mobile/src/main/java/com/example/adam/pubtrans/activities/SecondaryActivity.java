@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
  */
 public class SecondaryActivity extends BaseActivity implements IWebApiResponse, View.OnClickListener, IFabAnimate {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
+    public static final int MY_SNACKBAR_LENGTH = 3000;
     FragmentManager fragmentManager;
     private int drawingStartLocation;
     LinearLayout contentRoot;
@@ -79,15 +82,9 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
         favouriteFab.setOnClickListener(this);
         if(SharedPreferencesHelper.isFavouriteStop(this, nearMeResult)) {
             favouriteFab.setImageResource(R.drawable.star);
-            //favouriteFab.setColorNormal(getResources().getColor(R.color.secondary));
-            //favouriteFab.setColorPressed(getResources().getColor(R.color.secondaryFallback1));
-            //favouriteFab.setColorRipple(getResources().getColor(R.color.secondaryFallback2));
         }
         else {
             favouriteFab.setImageResource(R.drawable.star_outline);
-            //favouriteFab.setColorNormal(getResources().getColor(R.color.primary));
-            //favouriteFab.setColorPressed(getResources().getColor(R.color.primaryDark));
-            //favouriteFab.setColorRipple(getResources().getColor(R.color.primaryLight));
         }
 
         try {
@@ -177,8 +174,14 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
     }
 
     public void acknowledge(View v) {
+        hideBottomBar();
+    }
+
+    public void hideBottomBar() {
         shrinkCardView();
-        growFab();
+        if(favouriteFab.getVisibility()==View.INVISIBLE) {
+            growFab();
+        }
     }
 
     @Override
@@ -255,16 +258,10 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
                     setFavouriteCurrentStop();
                     favouriteFab.setImageResource(R.drawable.star);
                     revealView(v);
-                    //favouriteFab.setColorNormal(getResources().getColor(R.color.secondary));
-                    //favouriteFab.setColorPressed(getResources().getColor(R.color.secondaryFallback1));
-                    //favouriteFab.setColorRipple(getResources().getColor(R.color.secondaryFallback2));
                 }
                 else {
                     removeFavouriteCurrentStop();
                     favouriteFab.setImageResource(R.drawable.star_outline);
-                    //favouriteFab.setColorNormal(getResources().getColor(R.color.primary));
-                    //favouriteFab.setColorPressed(getResources().getColor(R.color.primaryDark));
-                    //favouriteFab.setColorRipple(getResources().getColor(R.color.primaryLight));
                 }
 
                 break;
@@ -289,22 +286,17 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
 
     @Override
     public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
-        runOnUiThread(new Runnable()
-        {
-            public void run()
-            {
+        runOnUiThread(new Runnable() {
+            public void run() {
                 Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
                 if(fragment!=null) {
                     ((IResults) fragment).setResults(broadNextDeparturesResults);
                 }
             }
         });
-
-
     }
 
     public void revealView(View view) {
-
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
         cy = (view.getTop() + view.getBottom()) / 2;
@@ -324,10 +316,14 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
             });
             reveal.start();
         }
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideBottomBar();
+            }
+        }, MY_SNACKBAR_LENGTH);
+
     }
-
-
-
-
-
 }

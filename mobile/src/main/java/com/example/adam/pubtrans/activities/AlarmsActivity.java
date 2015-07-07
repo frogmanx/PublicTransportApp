@@ -69,6 +69,8 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
         Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
         setSupportActionBar(toolbar);
 
+        cleanseAlarms();
+
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("Alarms");
 
@@ -146,13 +148,35 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
         }
     }
 
+    public void cleanseAlarms() {
+
+        ArrayList<String> tempArray = SharedPreferencesHelper.getAlarms(this);
+        Gson gson = new Gson();
+        for(int i = 0; i < tempArray.size();i++) {
+            String stringValue = tempArray.get(i);
+            Values value = gson.fromJson(tempArray.get(i), Values.class);
+            double x;
+            if(!value.realTime.contentEquals("null")) {
+                x = DateUtils.convertToMSAway(value.realTime);
+            }
+            else {
+                x = DateUtils.convertToMSAway(value.timeTable);
+            }
+            if(x<=0) {
+                SharedPreferencesHelper.removeAlarmJson(this, stringValue);
+            }
+        }
+
+
+    }
+
     public void updateAlarms() {
 
         ArrayList<String> tempArray = SharedPreferencesHelper.getAlarms(this);
         Gson gson = new Gson();
         alarms.clear();
         for(int i = 0; i < tempArray.size();i++) {
-            Values value = gson.fromJson(tempArray.get(0), Values.class);
+            Values value = gson.fromJson(tempArray.get(i), Values.class);
             alarms.add(value);
         }
 
@@ -164,7 +188,7 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
             Date alarmTime;
-            if(alarmValues.realTime!=null) {
+            if(!alarmValues.realTime.contains("null")) {
                 alarmTime = DateUtils.convertToDate(alarmValues.realTime);
             }
             else {

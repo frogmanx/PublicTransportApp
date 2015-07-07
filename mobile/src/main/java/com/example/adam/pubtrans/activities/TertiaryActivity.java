@@ -320,7 +320,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         return valuesList;
     }
 
-
     @Override
     public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
         this.stopsList = stopResults;
@@ -342,10 +341,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                 }
             }
         });
-    }
-
-    public void shrinkView() {
-
     }
 
     public void shrinkFab() {
@@ -372,7 +367,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                         myResults.add(valuesResults.get(i));
                     }
                 }
-
             }
         }
         else {
@@ -433,8 +427,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                     }catch (IllegalStateException e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
         });
