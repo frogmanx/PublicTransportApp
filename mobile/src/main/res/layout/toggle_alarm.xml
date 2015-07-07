@@ -12,16 +12,23 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     card_view:cardCornerRadius="4dp">
-    <TextView
-        android:id="@+id/card_text"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Remove Reminder"/>
-    <Button
+    <RelativeLayout
         android:id="@+id/confirm_timer"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:clickable="true"
         android:onClick="onClick"
-        android:text="Confirm"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_alarm_black_48dp"/>
+        <TextView
+            android:layout_below="@+id/image_view"
+            android:id="@+id/card_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Set Alarm"/>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
