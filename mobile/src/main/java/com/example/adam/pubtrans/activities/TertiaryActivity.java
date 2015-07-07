@@ -70,7 +70,7 @@ import java.util.List;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
+public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     FragmentManager fragmentManager;
@@ -237,6 +237,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
     public void onMapReady(GoogleMap map) {
         googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
         googleMap.setMyLocationEnabled(true);
+        googleMap.setOnInfoWindowClickListener(this);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(new LatLng(-37.643099, 144.754956));
         builder.include(new LatLng(-38.434046, 145.595909));
@@ -353,6 +354,12 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         fab.startAnimation(animScale);
     }
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Values values = marker.getData();
+        Log.e(TAG, "Info Window Clicked");
+        showAddTimerView(cardView, values);
+    }
 
     public void valuesResponse(final ArrayList<Values> valuesResults) {
         //filter out before time
@@ -402,6 +409,8 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                         if(x>0) {
                            // marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
                             marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                            marker.setData(object);
+
                             markerArrayList.add(marker);
                             builder.include(marker.getPosition());
                         }
@@ -411,6 +420,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                         double x = DateUtils.convertToMSAway(object.timeTable);
                         if(x>0) {
                             marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
+                            marker.setData(object);
                             markerArrayList.add(marker);
                             builder.include(marker.getPosition());
                         }

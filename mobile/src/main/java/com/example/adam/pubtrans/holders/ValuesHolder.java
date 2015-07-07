@@ -68,6 +68,4 @@ public class ValuesHolder extends RecyclerView.ViewHolder implements View.OnClic
     public void onClick(View v) {
         ((IAddTimer)v.getContext()).showAddTimerView(v, values);
     }
-
-
 }

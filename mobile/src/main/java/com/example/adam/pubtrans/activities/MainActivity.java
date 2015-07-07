@@ -206,13 +206,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
         buildGoogleApiClient();
 
-        try {
-            WebApi.getDisruptions(this);
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -274,8 +267,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
         fList.add(SupportMapFragment.newInstance());
         fList.add(NearMeListFragment.newInstance("Fragment 2"));
-        fList.add(DisruptionsFragment.newInstance("Fragment 3"));
-        fList.add(TramSimulatorFragment.newInstance("Fragment 4"));
+        fList.add(TramSimulatorFragment.newInstance("Fragment 3"));
 
         return fList;
 
@@ -459,13 +451,10 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         String jsonNearMeResult = gson.toJson(nearMeResult);
         intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
         startActivity(intent);
-
-
     }
 
     public void filterResults() {
         if(filteredResults==null) {
-
             filteredResults = new ArrayList<>();
         }
         filteredResults.clear();
@@ -486,7 +475,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
                 Marker marker= googleMap.addMarker(new MarkerOptions().position(loc).title(result.locationName + " " + result.transportType).snippet(result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.transportType)));
                 marker.setData(result);
                 builder.include(marker.getPosition());
-
                 markerArrayList.add(marker);
             }
         }
@@ -502,13 +490,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
             }catch (IllegalStateException e) {
                 e.printStackTrace();
             }
-
-
-
         }
-
-
-
     }
 
     @Override
@@ -519,19 +501,14 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
     public void shrinkFab() {
         Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
-
         fab.setMenuButtonHideAnimation(animScale);
         fab.hideMenuButton(true);
     }
 
     public void growFab() {
-
         Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_grow);
         fab.setVisibility(View.VISIBLE);
         fab.setMenuButtonShowAnimation(animScale);
         fab.showMenuButton(true);
-
     }
-
-
 }

@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.androidmapsextensions.SupportMapFragment;
 import com.example.adam.pubtrans.R;
@@ -21,6 +23,7 @@ import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.WebApi;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +80,8 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
             e.printStackTrace();
         }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 
@@ -113,6 +118,22 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if(id == android.R.id.home){
+            // app icon in action bar clicked; goto parent activity.
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
