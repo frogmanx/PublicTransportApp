@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Adam on 28/06/2015.
  */
 public class SharedPreferencesHelper {
-    public static String SP = "sharedpreferences";
+    public static String SP = "sharedpreferences2";
     public static String SP_STOPS_ARRAY_LIST = "stopsarraylist";
     public static String SP_ALARMS_ARRAY_LIST = "alarmsarraylist";
 

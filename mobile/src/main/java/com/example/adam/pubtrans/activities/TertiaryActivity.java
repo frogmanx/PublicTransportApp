@@ -11,10 +11,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
@@ -31,15 +29,11 @@ import android.widget.TextView;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
-import com.example.adam.pubtrans.fragments.StopsListFragment;
 import com.example.adam.pubtrans.fragments.ValuesListFragment;
+import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IAddTimer;
 import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.interfaces.IResults;
-import com.example.adam.pubtrans.interfaces.IWebApiResponse;
-import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
-import com.example.adam.pubtrans.models.Disruption;
-import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.receivers.AlarmReceiver;
@@ -62,7 +56,6 @@ import com.androidmapsextensions.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.gson.Gson;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,7 +63,7 @@ import java.util.List;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class TertiaryActivity extends BaseActivity implements IWebApiResponse, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
+public class TertiaryActivity extends BaseActivity implements Callback<ArrayList<Values>>, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     FragmentManager fragmentManager;
@@ -321,28 +314,6 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         return valuesList;
     }
 
-    @Override
-    public void stopsOnLineResponse(final ArrayList<Stop>  stopResults) {
-        this.stopsList = stopResults;
-        runOnUiThread(new Runnable()
-        {
-            public void run()
-            {
-                ((IResults) fragments.get(1)).setResults(stopResults);
-                if(stopResults!=null && stopResults.size() > 1 ) {
-                    googleMap.clear();
-                    markerArrayList.clear();
-                }
-                for(Stop object: stopResults){
-                    LatLng loc = new LatLng(object.latitude, object.longitude);
-                    markerArrayList.add(googleMap.addMarker(new MarkerOptions().position(loc).title(object.locationName + " " + object.transportType).icon(ImageUtils.getTransportPinDescriptor(object.transportType))));
-                    if(googleMap != null){
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-                    }
-                }
-            }
-        });
-    }
 
     public void shrinkFab() {
         Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_shrink);
@@ -361,7 +332,8 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
         showAddTimerView(cardView, values);
     }
 
-    public void valuesResponse(final ArrayList<Values> valuesResults) {
+
+    public void success(final ArrayList<Values> valuesResults) {
         //filter out before time
         ArrayList<Values> myResults = new ArrayList<>();
         if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null&&!valuesResults.get(0).realTime.contentEquals("null")) {
@@ -407,7 +379,7 @@ public class TertiaryActivity extends BaseActivity implements IWebApiResponse, G
                         double x = DateUtils.convertToMSAway(object.realTime);
 
                         if(x>0) {
-                           // marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                            // marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
                             marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
                             marker.setData(object);
 

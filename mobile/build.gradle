@@ -46,4 +46,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:7.5.0'
     compile 'com.google.android.gms:play-services-identity:7.3.0'
     compile 'com.google.android.gms:play-services-gcm:7.3.0'
+
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
 }

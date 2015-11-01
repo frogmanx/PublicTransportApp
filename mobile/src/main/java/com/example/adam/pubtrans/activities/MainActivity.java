@@ -1,19 +1,10 @@
 package com.example.adam.pubtrans.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,32 +19,25 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.SlidingTabLayout;
 import com.example.adam.pubtrans.adapters.DrawerListAdapter;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
-import com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment;
-import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
+import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IFabAnimate;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
-import com.example.adam.pubtrans.interfaces.IWebApiResponse;
-import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NavItem;
 import com.example.adam.pubtrans.utils.ImageUtils;
 import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.example.adam.pubtrans.models.Disruption;
-import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
-import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
@@ -74,7 +58,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends BaseActivity implements IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, IWebApiResponse, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private RecyclerView mRecyclerView;
@@ -395,8 +379,8 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
     }
 
-    @Override
-    public void nearMeResponse(final ArrayList<NearMeResult> nearMeResults) {
+
+    public void success(ArrayList<NearMeResult> nearMeResults) {
         this.nearMeResults = nearMeResults;
         runOnUiThread(new Runnable()
         {
@@ -404,21 +388,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
             public void run()
             {
                 filterResults();
-            }
-        });
-
-    }
-
-
-    @Override
-    public void disruptionsResponse(final ArrayList<Disruption>  disruptionsResults) {
-        this.disruptionsResults = disruptionsResults;
-        runOnUiThread(new Runnable()
-        {
-
-            public void run()
-            {
-                ((IResults) fragments.get(2)).setResults(disruptionsResults);
             }
         });
     }
@@ -469,10 +438,10 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         googleMap.clear();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for(NearMeResult result : nearMeResults) {
-            if (filter.contains(result.transportType)) {
+            if (filter.contains(result.result.transportType)) {
                 filteredResults.add(result);
-                LatLng loc = new LatLng(result.latitude, result.longitude);
-                Marker marker= googleMap.addMarker(new MarkerOptions().position(loc).title(result.locationName + " " + result.transportType).snippet(result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.transportType)));
+                LatLng loc = new LatLng(result.result.latitude, result.result.longitude);
+                Marker marker= googleMap.addMarker(new MarkerOptions().position(loc).title(result.result.locationName + " " + result.result.transportType).snippet(result.result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.result.transportType)));
                 marker.setData(result);
                 builder.include(marker.getPosition());
                 markerArrayList.add(marker);

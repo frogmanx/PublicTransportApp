@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,16 +9,14 @@ import org.json.JSONObject;
  * Created by Adam on 31/05/2015.
  */
 public class Run {
+    @SerializedName("transport_type")
     public String transportType;
+    @SerializedName("run_id")
     public int runId;
+    @SerializedName("num_skipped")
     public int numSkipped;
+    @SerializedName("destination_id")
     public int destinationId;
+    @SerializedName("destination_name")
     public String destinationName;
-    public Run(JSONObject jsonObject) throws JSONException {
-        this.transportType = jsonObject.getString("transport_type");
-        this.runId = jsonObject.getInt("run_id");
-        this.numSkipped = jsonObject.getInt("num_skipped");
-        this.destinationId = jsonObject.getInt("destination_id");
-        this.destinationName = jsonObject.getString("destination_name");
-    }
 }

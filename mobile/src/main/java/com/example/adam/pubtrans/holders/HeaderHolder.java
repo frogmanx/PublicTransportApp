@@ -27,5 +27,4 @@ public class HeaderHolder extends RecyclerView.ViewHolder {
         titleView.setText(title);
     }
 
-
 }

@@ -34,6 +34,7 @@ import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
+import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Disruption;
@@ -49,7 +50,7 @@ import java.util.List;
 /**
  * Created by Adam on 17/06/2015.
  */
-public class SearchActivity extends BaseActivity implements IPubActivity, SearchView.OnQueryTextListener{
+public class SearchActivity extends BaseActivity implements Callback<ArrayList<NearMeResult>>,IPubActivity, SearchView.OnQueryTextListener{
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -84,9 +85,8 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
 
     }
 
-    @Override
-    public void nearMeResponse(final ArrayList<NearMeResult> searchResults) {
-        this.searchResults = searchResults;
+    public void success(ArrayList<NearMeResult> searchNearMeResults) {
+        this.searchResults = searchNearMeResults;
         runOnUiThread(new Runnable()
         {
 
@@ -96,6 +96,7 @@ public class SearchActivity extends BaseActivity implements IPubActivity, Search
             }
         });
     }
+
 
     public ArrayList<NearMeResult> getNearMeResults() {
         return searchResults;

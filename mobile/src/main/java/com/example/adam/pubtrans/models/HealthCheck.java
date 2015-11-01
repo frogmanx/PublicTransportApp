@@ -12,10 +12,4 @@ public class HealthCheck {
     boolean memcacheOK;
     boolean databaseOK;
 
-    public HealthCheck(JSONObject json) throws JSONException {
-        this.securityTokenOK = json.getBoolean("securityTokenOK");
-        this.clientClockOK = json.getBoolean("clientClockOK");
-        this.memcacheOK = json.getBoolean("memcacheOK");
-        this.databaseOK = json.getBoolean("databaseOK");
-    }
 }

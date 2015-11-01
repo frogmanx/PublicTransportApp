@@ -3,19 +3,16 @@ package com.example.adam.pubtrans.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,19 +21,14 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 
 import com.example.adam.pubtrans.fragments.BroadNextDepaturesListFragment;
+import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IFabAnimate;
-import com.example.adam.pubtrans.models.Disruption;
-import com.example.adam.pubtrans.models.DisruptionsResult;
-import com.example.adam.pubtrans.models.Stop;
-import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.interfaces.IResults;
-import com.example.adam.pubtrans.interfaces.IWebApiResponse;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
@@ -49,7 +41,7 @@ import java.util.ArrayList;
 /**
  * Created by Adam on 31/05/2015.
  */
-public class SecondaryActivity extends BaseActivity implements IWebApiResponse, View.OnClickListener, IFabAnimate {
+public class SecondaryActivity extends BaseActivity implements Callback<ArrayList<BroadNextDeparturesResult>>, View.OnClickListener, IFabAnimate {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     public static final int MY_SNACKBAR_LENGTH = 3000;
     FragmentManager fragmentManager;
@@ -88,7 +80,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
         }
 
         try {
-            WebApi.getBroadNextDepatures(nearMeResult.transportType, nearMeResult.stopId,5,this);
+            WebApi.getBroadNextDepatures(nearMeResult.result.transportType, nearMeResult.result.stopId,5,this);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -163,14 +155,16 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
     }*/
 
     public void shrinkCardView() {
-        Animator reveal = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0);
-        reveal.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                cardView.setVisibility(View.INVISIBLE);
-            }
-        });
-        reveal.start();
+        if(cardView.getVisibility()==View.VISIBLE) {
+            Animator reveal = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0);
+            reveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    cardView.setVisibility(View.INVISIBLE);
+                }
+            });
+            reveal.start();
+        }
     }
 
     public void acknowledge(View v) {
@@ -284,8 +278,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
         SharedPreferencesHelper.removeFavouriteStop(this, nearMeResult);
     }
 
-    @Override
-    public void broadNextDeparturesResponse(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
+    public void success(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
         runOnUiThread(new Runnable() {
             public void run() {
                 Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
@@ -300,6 +293,13 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
         cy = (view.getTop() + view.getBottom()) / 2;
+        Log.e("Reveal", Integer.toString(cx));
+        Log.e("Reveal", Integer.toString(view.getLeft()));
+        Log.e("Reveal", Integer.toString(view.getRight()));
+        Log.e("Reveal", Integer.toString(cy));
+        Log.e("Reveal", Integer.toString(view.getTop()));
+        Log.e("Reveal", Integer.toString(view.getBottom()));
+
         radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
 
         if (cardView.getVisibility() == View.INVISIBLE) {
@@ -317,8 +317,7 @@ public class SecondaryActivity extends BaseActivity implements IWebApiResponse, 
             reveal.start();
         }
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        cardView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 hideBottomBar();

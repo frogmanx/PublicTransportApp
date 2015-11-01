@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,23 +12,19 @@ import java.util.ArrayList;
  * Created by Adam on 31/05/2015.
  */
 public class DisruptionsResult {
-    public ArrayList<Disruption> disruptionArray;
+    public ArrayList<Disruption> general;
+    @SerializedName("metro-train")
+    public ArrayList<Disruption> metroTrain;
+    @SerializedName("metro-tram")
+    public ArrayList<Disruption> metroTram;
+    @SerializedName("metro-bus")
+    public ArrayList<Disruption> metroBus;
+    @SerializedName("regional-train")
+    public ArrayList<Disruption> regionalTrain;
+    @SerializedName("regional-coach")
+    public ArrayList<Disruption> regionalCoach;
+    @SerializedName("regional-bus")
+    public ArrayList<Disruption> regionalBus;
 
-    public DisruptionsResult(JSONObject jsonObject) throws JSONException{
-        this.disruptionArray = new ArrayList<>();
-        setDisruptionArray("general", jsonObject);
-        setDisruptionArray("metro-train", jsonObject);
-        setDisruptionArray("metro-tram", jsonObject);
-        setDisruptionArray("metro-bus", jsonObject);
-        setDisruptionArray("regional-train", jsonObject);
-        setDisruptionArray("regional-coach", jsonObject);
-        setDisruptionArray("regional-bus", jsonObject);
-    }
 
-    private void setDisruptionArray(String tag, JSONObject jsonObject) throws JSONException{
-        JSONArray array = jsonObject.getJSONArray(tag);
-        for(int i = 0; i < array.length();i++) {
-            this.disruptionArray.add(new Disruption(array.getJSONObject(i), tag));
-        }
-    }
 }

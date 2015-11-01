@@ -17,11 +17,14 @@ import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
 import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
+import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Disruption;
+import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Values;
+import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -31,7 +34,7 @@ import java.util.List;
 /**
  * Created by Adam on 23/06/2015.
  */
-public class DisruptionsActivity extends BaseActivity implements IPubActivity {
+public class DisruptionsActivity extends BaseActivity implements IPubActivity, Callback<DisruptionsResult> {
 
     ViewPager mViewPager;
     ArrayList<Fragment> fragments;
@@ -106,15 +109,32 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity {
         return null;
     }
 
-    @Override
-    public void disruptionsResponse(final ArrayList<Disruption>  mydisruptionsResults) {
-        runOnUiThread(new Runnable()
-        {
+    public void setTypeInArrayList(ArrayList<Disruption> arrayList, String type) {
+        for(int i = 0; i < arrayList.size(); i++) {
+            arrayList.get(i).type = type;
+        }
+    }
 
-            public void run()
-            {
+    @Override
+    public void success(final DisruptionsResult mydisruptionsResults) {
+        setTypeInArrayList(mydisruptionsResults.general, "general");
+        setTypeInArrayList(mydisruptionsResults.metroBus, PTVConstants.BUS_TYPE);
+        setTypeInArrayList(mydisruptionsResults.metroTrain, PTVConstants.TRAIN_TYPE);
+        setTypeInArrayList(mydisruptionsResults.metroTram, PTVConstants.TRAM_TYPE);
+        setTypeInArrayList(mydisruptionsResults.regionalBus, PTVConstants.BUS_TYPE);
+        setTypeInArrayList(mydisruptionsResults.regionalCoach, PTVConstants.BUS_TYPE);
+        setTypeInArrayList(mydisruptionsResults.regionalTrain, PTVConstants.TRAIN_TYPE);
+        runOnUiThread(new Runnable() {
+
+            public void run() {
                 disruptionsResults.clear();
-                disruptionsResults.addAll(mydisruptionsResults);
+                disruptionsResults.addAll(mydisruptionsResults.general);
+                disruptionsResults.addAll(mydisruptionsResults.metroBus);
+                disruptionsResults.addAll(mydisruptionsResults.metroTrain);
+                disruptionsResults.addAll(mydisruptionsResults.metroTram);
+                disruptionsResults.addAll(mydisruptionsResults.regionalBus);
+                disruptionsResults.addAll(mydisruptionsResults.regionalCoach);
+                disruptionsResults.addAll(mydisruptionsResults.regionalTrain);
                 mAdapter.notifyDataSetChanged();
             }
         });

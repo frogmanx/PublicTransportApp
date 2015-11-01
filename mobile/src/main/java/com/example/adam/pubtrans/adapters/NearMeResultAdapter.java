@@ -61,7 +61,7 @@ public class NearMeResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((NearMeResultHolder) holder).bindResult(nearMeResult);
         }
         else if(holder instanceof HeaderHolder) {
-            ((HeaderHolder) holder).bindResult(mNearMeResults.get(pos).locationName);
+            ((HeaderHolder) holder).bindResult(mNearMeResults.get(pos).result.locationName);
         }
 
     }

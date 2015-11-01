@@ -117,7 +117,7 @@ public class MapViewFragment extends Fragment implements IResults<NearMeResult>,
         for(Object result : results) {
             if(result instanceof NearMeResult) {
                 NearMeResult nearMeResult = (NearMeResult) result;
-                if (filter.contains(nearMeResult.transportType)) {
+                if (filter.contains(nearMeResult.result.transportType)) {
                     filteredResults.add(nearMeResult);
                 }
             }

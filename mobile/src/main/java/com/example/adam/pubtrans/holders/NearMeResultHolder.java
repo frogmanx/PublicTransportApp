@@ -39,10 +39,13 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
 
     public void bindResult(NearMeResult nearMeResult) {
         mNearMeResult = nearMeResult;
-        transportType.setText(mNearMeResult.locationName);
+        if(mNearMeResult.result!=null) {
+
+            transportType.setText(mNearMeResult.result.locationName);
+            imageView.setImageResource(ImageUtils.getTransportImageResource(this.mNearMeResult.result.transportType));
+        }
 
 
-        imageView.setImageResource(ImageUtils.getTransportImageResource(this.mNearMeResult.transportType));
     }
 
     @Override
@@ -50,7 +53,6 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
         ((IFabAnimate)v.getContext()).shrinkFab();
         Intent intent = new Intent(v.getContext(), SecondaryActivity.class);
         Gson gson = new Gson();
-        Log.e("NearMeResultHolder", mNearMeResult.locationName);
         String jsonNearMeResult = gson.toJson(mNearMeResult);
         intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
 

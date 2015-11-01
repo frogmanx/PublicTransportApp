@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,22 +12,18 @@ import java.io.Serializable;
  */
 public class Stop implements Comparable<Stop>, Serializable{
     public String suburb;
+    @SerializedName("transport_type")
     public String transportType;
+    @SerializedName("location_name")
     public String locationName;
+    @SerializedName("stop_id")
     public int stopId;
+    @SerializedName("lat")
     public double latitude;
+    @SerializedName("lon")
     public double longitude;
     public double distance;
 
-    public Stop(JSONObject json) throws JSONException {
-        this.suburb = json.getString("suburb");
-        this.transportType = json.getString("transport_type");
-        this.locationName = json.getString("location_name");
-        this.stopId = json.getInt("stop_id");
-        this.latitude = json.getDouble("lat");
-        this.longitude = json.getDouble("lon");
-        this.distance = json.getDouble("distance");
-    }
 
     @Override
     public int compareTo(Stop other){
