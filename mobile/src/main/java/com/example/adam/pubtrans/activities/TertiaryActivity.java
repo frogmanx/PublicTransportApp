@@ -150,7 +150,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
 
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
-        cy = (view.getTop() + view.getBottom()) / 2;
+        cy = (view.getBottom() - view.getTop()) / 2;
         radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
 
         if (cardView.getVisibility() == View.INVISIBLE) {
@@ -332,7 +332,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     public void success(final ArrayList<Values> valuesResults) {
         //filter out before time
         ArrayList<Values> myResults = new ArrayList<>();
-        if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null&&!valuesResults.get(0).realTime.contentEquals("null")) {
+        if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null&&valuesResults.get(0).realTime!=null) {
             for(int i = 0; i < valuesResults.size();i++) {
                 Log.e("HERERER", valuesResults.get(i).realTime);
                 if(valuesResults.get(i).realTime!=null) {
@@ -370,7 +370,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
                 for(Values object: valuesList){
                     LatLng loc = new LatLng(object.platform.stop.latitude, object.platform.stop.longitude);
                     Marker marker;
-                    if(!object.realTime.contentEquals("null")) {
+                    if(object.realTime!=null) {
                         float y = DateUtils.getAlphaFromTime(object.realTime, THRESHOLD);
                         double x = DateUtils.convertToMSAway(object.realTime);
 
@@ -415,7 +415,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
             Date alarmTime;
-            if(!alarmValues.realTime.contentEquals("null")) {
+            if(alarmValues.realTime!=null) {
                 alarmTime = DateUtils.convertToDate(alarmValues.realTime);
             }
             else {

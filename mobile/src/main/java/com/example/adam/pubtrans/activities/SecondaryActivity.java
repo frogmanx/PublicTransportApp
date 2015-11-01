@@ -290,7 +290,7 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
     public void revealView(View view) {
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
-        cy = (view.getTop() + view.getBottom()) / 2;
+        cy = (view.getBottom() - view.getTop()) / 2;
         Log.e("Reveal", Integer.toString(cx));
         Log.e("Reveal", Integer.toString(view.getLeft()));
         Log.e("Reveal", Integer.toString(view.getRight()));

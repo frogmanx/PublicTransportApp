@@ -426,7 +426,9 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         }
         filteredResults.add(new NearMeResult("Stops Nearby"));
         markerArrayList.clear();
-        googleMap.clear();
+        if(googleMap!=null) {
+            googleMap.clear();
+        }
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for(NearMeResult result : nearMeResults) {
             if (filter.contains(result.result.transportType)) {
