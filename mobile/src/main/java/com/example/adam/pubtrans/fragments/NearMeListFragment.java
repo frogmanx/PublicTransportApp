@@ -26,13 +26,16 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by Adam on 31/05/2015.
  */
 public class NearMeListFragment extends Fragment implements IResults<NearMeResult> {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
     public final static String TAG = "NearMeListFragment";
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -55,7 +58,7 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+        ButterKnife.bind(this, v);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

@@ -20,12 +20,15 @@ import com.github.clans.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 8/06/2015.
  */
 public class MapViewFragment extends Fragment implements IResults<NearMeResult>, View.OnClickListener {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<NearMeResult> results;
@@ -50,7 +53,7 @@ public class MapViewFragment extends Fragment implements IResults<NearMeResult>,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.map_fragment, container, false);
-
+        ButterKnife.bind(this, v);
         results = ((MainActivity) getActivity()).getNearMeResults();
         filterResults();
 
@@ -70,9 +73,7 @@ public class MapViewFragment extends Fragment implements IResults<NearMeResult>,
     }
 
     public void refresh() {
-        View v= getView();
-        if(v!=null) {
-            RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
+        if(pageLoading!=null) {
             pageLoading.setVisibility(View.VISIBLE);
         }
 

@@ -56,14 +56,13 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 public class MainActivity extends BaseActivity implements IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     ArrayList<NearMeResult> nearMeResults;
     ArrayList<Disruption>  disruptionsResults;
     ArrayList<NearMeResult> filteredResults;
@@ -72,16 +71,23 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     ArrayList<Fragment> fragments;
     private GoogleMap googleMap;
     public final static String TAG = "MainActivity";
-    ViewPager mViewPager;
-    SlidingTabLayout tabs;
     private ArrayList<String> filter;
     private boolean firstLoad;
     private boolean mapIsReady = false;
-    ListView mDrawerList;
-    RelativeLayout mDrawerPane;
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    FloatingActionMenu fab;
+
+    @Bind(R.id.pager) ViewPager mViewPager;
+    @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
+    @Bind(R.id.tabs) SlidingTabLayout tabs;
+    @Bind(R.id.navList) ListView mDrawerList;
+    @Bind(R.id.drawerPane) RelativeLayout mDrawerPane;
+    @Bind(R.id.drawerLayout) DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.menu1) FloatingActionMenu fab;
+
+    @Bind(R.id.fab1) FloatingActionButton fab1;
+    @Bind(R.id.fab2) FloatingActionButton fab2;
+    @Bind(R.id.fab3) FloatingActionButton fab3;
 
     ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
@@ -90,18 +96,14 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
-        fab = (FloatingActionMenu) findViewById(R.id.menu1);
 
 
         setTitle("Near me");
         firstLoad = true;
         disruptionsResults = new ArrayList<>();
         nearMeResults = new ArrayList<>();
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
         filter = new ArrayList<String>();
 
@@ -114,12 +116,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         mNavItems.add(new NavItem("Disruptions", "Information about affected transport", R.drawable.ic_report_problem_black_48dp));
         mNavItems.add(new NavItem("Alarms", "View your transport alarms", R.drawable.ic_alarm_black_48dp));
 
-        // DrawerLayout
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-
-        // Populate the Navigtion Drawer with options
-        mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
-        mDrawerList = (ListView) findViewById(R.id.navList);
         DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
         mDrawerList.setAdapter(adapter);
 
@@ -159,7 +155,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         mViewPager.setAdapter(fragmentPagerAdapter);
 
         // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
@@ -173,10 +168,6 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(mViewPager);
 
-
-        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab3);
 
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);

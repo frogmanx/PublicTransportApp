@@ -10,26 +10,23 @@ import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Stop;
 import com.example.adam.pubtrans.utils.ImageUtils;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 28/05/2015.
  */
-// Provide a reference to the views for each data item
-// Complex data items may need more than one view per item, and
-// you provide access to all the views for a data item in a view holder
 public class StopsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    TextView transportType;
-    TextView locationName;
-    TextView timeTimeTableUTC;
-    ImageView imageView;
+    @Bind(R.id.transport_type) TextView transportType;
+    @Bind(R.id.location_name) TextView locationName;
+    @Bind(R.id.time) TextView timeTimeTableUTC;
+    @Bind(R.id.image) ImageView imageView;
     private Stop stop;
 
     public StopsHolder(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
-        transportType = (TextView) itemView.findViewById(R.id.transport_type);
-        locationName = (TextView) itemView.findViewById(R.id.location_name);
-        timeTimeTableUTC = (TextView) itemView.findViewById(R.id.time);
-
+        ButterKnife.bind(this, itemView);
         imageView.setImageResource(ImageUtils.getTransportImageResource(this.stop.transportType));
     }
 

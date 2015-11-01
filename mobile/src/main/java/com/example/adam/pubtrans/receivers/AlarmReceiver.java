@@ -27,10 +27,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
         ringtone.play();
-        String jsonValuesResult = intent.getStringExtra(PTVConstants.JSON_VALUES);
-        Gson gson = new Gson();
+        Values alarmValues = intent.getParcelableExtra(PTVConstants.JSON_VALUES);
 
-        Values alarmValues =gson.fromJson(jsonValuesResult, Values.class);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(ImageUtils.getTransportImageResource(alarmValues.platform.stop.transportType))

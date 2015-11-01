@@ -2,6 +2,7 @@ package com.example.adam.pubtrans.holders;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,24 +18,22 @@ import com.example.adam.pubtrans.activities.SecondaryActivity;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.google.gson.Gson;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 28/05/2015.
  */
-// Provide a reference to the views for each data item
-// Complex data items may need more than one view per item, and
-// you provide access to all the views for a data item in a view holder
 public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    TextView transportType;
-    TextView locationName;
-    ImageView imageView;
+    @Bind(R.id.transport_type) TextView transportType;
+    @Bind(R.id.location_name)  TextView locationName;
+    @Bind(R.id.image) ImageView imageView;
     private NearMeResult mNearMeResult;
 
     public NearMeResultHolder(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
-        transportType = (TextView) itemView.findViewById(R.id.transport_type);
-        locationName = (TextView) itemView.findViewById(R.id.location_name);
-        imageView = (ImageView)itemView.findViewById(R.id.image);
+        ButterKnife.bind(this, itemView);
     }
 
     public void bindResult(NearMeResult nearMeResult) {
@@ -52,9 +51,7 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
     public void onClick(View v) {
         ((IFabAnimate)v.getContext()).shrinkFab();
         Intent intent = new Intent(v.getContext(), SecondaryActivity.class);
-        Gson gson = new Gson();
-        String jsonNearMeResult = gson.toJson(mNearMeResult);
-        intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
+        intent.putExtra(PTVConstants.JSON_NEARMERESULT, mNearMeResult);
 
         //Get location on screen for tapped view
         int[] startingLocation = new int[2];

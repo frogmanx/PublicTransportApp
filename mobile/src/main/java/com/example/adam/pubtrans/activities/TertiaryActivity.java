@@ -60,6 +60,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 31/05/2015.
  */
@@ -75,11 +78,12 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     ArrayList<Fragment> fragments;
     private GoogleMap googleMap;
     public final static String TAG = "MainActivity";
-    ViewPager mViewPager;
-    SlidingTabLayout tabs;
+    @Bind(R.id.pager) ViewPager mViewPager;
+    @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
+    @Bind(R.id.tabs) SlidingTabLayout tabs;
     Toolbar bottomToolbar;
-    CardView cardView;
-    CardView timerCardView;
+    @Bind(R.id.card_view) CardView cardView;
+    @Bind(R.id.timer_card_view) CardView timerCardView;
 
     private Values alarmValues;
     int cx;
@@ -87,21 +91,20 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     float radius;
 
 
-    SelectableFloatingActionButton fab;
+    @Bind(R.id.fab) SelectableFloatingActionButton fab;
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tertiary_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         setTitle("Stopping Pattern");
 
         stopsList = new ArrayList<>();
         valuesList = new ArrayList<>();
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
 
 
@@ -110,7 +113,6 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
         mViewPager.setAdapter(adapter);
 
         // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
@@ -137,15 +139,9 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
 
         fragmentManager = getSupportFragmentManager();
 
-        cardView = (CardView) findViewById(R.id.card_view);
-
-        timerCardView = (CardView) findViewById(R.id.timer_card_view);
-
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-        fab = (SelectableFloatingActionButton) findViewById(R.id.fab);
 
         growFab();
     }

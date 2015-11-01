@@ -24,21 +24,25 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 31/05/2015.
  */
 public class BroadNextDepaturesListFragment extends Fragment implements IResults<BroadNextDeparturesResult> {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<BroadNextDeparturesResult> results;
     private ArrayList<Marker> markerArrayList;
 
-    TextView transportType;
-    TextView locationName;
-    ImageView imageView;
-    RelativeLayout headerView;
+    @Bind(R.id.transport_type) TextView transportType;
+    @Bind(R.id.location_name) TextView locationName;
+    @Bind(R.id.image) ImageView imageView;
+    @Bind(R.id.header_item) RelativeLayout headerView;
     private NearMeResult mNearMeResult;
 
 
@@ -62,14 +66,9 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.broad_next_depatures_fragment, container, false);
-        RelativeLayout pageLoading = (RelativeLayout) v.findViewById(R.id.pageLoading);
+        ButterKnife.bind(this, v);
         pageLoading.setVisibility(View.VISIBLE);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
 
-        transportType = (TextView) v.findViewById(R.id.transport_type);
-        locationName = (TextView) v.findViewById(R.id.location_name);
-        imageView = (ImageView)v.findViewById(R.id.image);
-        headerView = (RelativeLayout) v.findViewById(R.id.header_item);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -87,16 +86,15 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
         super.onStart();
         mNearMeResult = ((SecondaryActivity) getActivity()).getSelectedStop();
 
+        if(mNearMeResult.result!=null) {
+            transportType.setText(mNearMeResult.result.locationName);
+            imageView.setImageResource(ImageUtils.getTransportImageResourceWhite(mNearMeResult.result.transportType));
+        }
 
-
-        transportType.setText(mNearMeResult.result.locationName);
-        imageView.setImageResource(ImageUtils.getTransportImageResourceWhite(this.mNearMeResult.result.transportType));
     }
 
     public void refresh() {
-        View v= getView();
-        if(v!=null) {
-            RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
+        if(pageLoading!=null) {
             pageLoading.setVisibility(View.VISIBLE);
         }
 
@@ -120,7 +118,6 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
             mAdapter.notifyDataSetChanged();
 
         }
-        RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
         pageLoading.setVisibility(View.GONE);
 
     }

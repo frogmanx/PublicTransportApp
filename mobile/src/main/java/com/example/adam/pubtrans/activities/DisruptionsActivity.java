@@ -31,17 +31,21 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 23/06/2015.
  */
 public class DisruptionsActivity extends BaseActivity implements IPubActivity, Callback<DisruptionsResult> {
 
-    ViewPager mViewPager;
+    @Bind(R.id.anim_toolbar) Toolbar toolbar;
+    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
     ArrayList<Fragment> fragments;
 
     ArrayList<Disruption>  disruptionsResults;
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.scrollableview) RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -50,22 +54,16 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.disruptions);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
         setSupportActionBar(toolbar);
 
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("Disruptions");
 
         setTitle("Disruptions");
         disruptionsResults = new ArrayList<>();
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
 
-        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-       // mViewPager.setAdapter(fragmentPagerAdapter);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.scrollableview);
 
 
         mLayoutManager = new LinearLayoutManager(this);

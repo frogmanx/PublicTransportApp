@@ -1,5 +1,7 @@
 package com.example.adam.pubtrans.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.example.adam.pubtrans.utils.PTVConstants;
@@ -12,7 +14,7 @@ import java.io.Serializable;
 /**
  * Created by Adam on 30/05/2015.
  */
-public class NearMeResult implements  Serializable, Comparable<NearMeResult> {
+public class NearMeResult implements  Comparable<NearMeResult>, Parcelable {
 
     public String type;
     public Result result;
@@ -38,5 +40,29 @@ public class NearMeResult implements  Serializable, Comparable<NearMeResult> {
         return false;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.type);
+        dest.writeParcelable(this.result, 0);
+    }
+
+    protected NearMeResult(Parcel in) {
+        this.type = in.readString();
+        this.result = in.readParcelable(Result.class.getClassLoader());
+    }
+
+    public static final Creator<NearMeResult> CREATOR = new Creator<NearMeResult>() {
+        public NearMeResult createFromParcel(Parcel source) {
+            return new NearMeResult(source);
+        }
+
+        public NearMeResult[] newArray(int size) {
+            return new NearMeResult[size];
+        }
+    };
 }

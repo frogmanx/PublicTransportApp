@@ -24,29 +24,19 @@ import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by Adam on 28/05/2015.
  */
-// Provide a reference to the views for each data item
-// Complex data items may need more than one view per item, and
-// you provide access to all the views for a data item in a view holder
-public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    TextView transportType;
-    TextView locationName;
-    TextView timeTimeTableUTC;
-    TextView realTimeTableUTC;
-    ImageView imageView;
+public class BroadNextDeparturesHolder extends ValuesBaseHolder {
+
     private BroadNextDeparturesResult mBroadNextDeparturesResults;
 
     public BroadNextDeparturesHolder(View itemView) {
         super(itemView);
-        itemView.setOnClickListener(this);
-        transportType = (TextView) itemView.findViewById(R.id.transport_type);
-        locationName = (TextView) itemView.findViewById(R.id.location_name);
-        timeTimeTableUTC = (TextView) itemView.findViewById(R.id.time);
-        realTimeTableUTC = (TextView) itemView.findViewById(R.id.time2);
-        imageView = (ImageView)itemView.findViewById(R.id.image);
     }
 
     public void bindResult(BroadNextDeparturesResult broadNextDeparturesResult) {
@@ -60,7 +50,6 @@ public class BroadNextDeparturesHolder extends RecyclerView.ViewHolder implement
             realTimeTableUTC.setText(DateUtils.convertToContext(mBroadNextDeparturesResults.timeRealTimeUTC, false));
 
         }
-
         imageView.setImageResource(ImageUtils.getTransportImageResource(this.mBroadNextDeparturesResults.run.transportType));
     }
 

@@ -17,12 +17,16 @@ import com.example.adam.pubtrans.models.Values;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 4/06/2015.
  */
 public class ValuesListFragment extends Fragment implements IResults<Values> {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Values> results;
@@ -44,7 +48,7 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.stop_list_fragment, container, false);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+        ButterKnife.bind(this, v);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -64,12 +68,9 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
     }
 
     public void refresh() {
-        View v= getView();
-        if(v!=null) {
-            RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
+        if(pageLoading!=null) {
             pageLoading.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void reloadResults() {
@@ -80,7 +81,6 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
         this.results.clear();
         this.results.addAll(results);
         mAdapter.notifyDataSetChanged();
-        RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
         pageLoading.setVisibility(View.GONE);
     }
 }

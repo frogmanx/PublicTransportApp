@@ -23,6 +23,9 @@ import com.github.clans.fab.FloatingActionButton;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 14/06/2015.
  */
@@ -30,6 +33,7 @@ public class TramSimulatorFragment extends Fragment  implements View.OnClickList
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
     MediaPlayer player;
+    @Bind(R.id.fab1) FloatingActionButton fab1;
 
     public static final TramSimulatorFragment newInstance(String message) {
         TramSimulatorFragment f = new TramSimulatorFragment();
@@ -46,7 +50,7 @@ public class TramSimulatorFragment extends Fragment  implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.tram_sim_fragment, container, false);
-        FloatingActionButton fab1 = (FloatingActionButton) v.findViewById(R.id.fab1);
+        ButterKnife.bind(this, v);
 
         fab1.setOnClickListener(this);
 

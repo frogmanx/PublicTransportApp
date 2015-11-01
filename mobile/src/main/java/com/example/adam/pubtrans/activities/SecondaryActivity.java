@@ -38,6 +38,9 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 31/05/2015.
  */
@@ -46,10 +49,11 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
     public static final int MY_SNACKBAR_LENGTH = 3000;
     FragmentManager fragmentManager;
     private int drawingStartLocation;
-    LinearLayout contentRoot;
+    @Bind(R.id.contentRoot) LinearLayout contentRoot;
     NearMeResult nearMeResult;
-    SelectableFloatingActionButton favouriteFab;
-    CardView cardView;
+    @Bind(R.id.favouriteFab) SelectableFloatingActionButton favouriteFab;
+    @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
+    @Bind(R.id.favourite_card_view) CardView cardView;
 
     int cx;
     int cy;
@@ -60,17 +64,14 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.secondary_activity);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
 
         setTitle("Broad Next Departures");
-        String jsonNearMeResult = getIntent().getStringExtra(PTVConstants.JSON_NEARMERESULT);
-        Gson gson = new Gson();
+        nearMeResult = getIntent().getParcelableExtra(PTVConstants.JSON_NEARMERESULT);
 
-        nearMeResult =gson.fromJson(jsonNearMeResult, NearMeResult.class);
 
-        favouriteFab = (SelectableFloatingActionButton) findViewById(R.id.favouriteFab);
         favouriteFab.setOnClickListener(this);
         if(SharedPreferencesHelper.isFavouriteStop(this, nearMeResult)) {
             favouriteFab.setImageResource(R.drawable.star);
@@ -90,8 +91,6 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
 
         fragmentManager = getSupportFragmentManager();
 
-        contentRoot = (LinearLayout) findViewById(R.id.contentRoot);
-
         drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
         if (savedInstanceState == null) {
             contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -108,7 +107,6 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
-        cardView = (CardView) findViewById(R.id.favourite_card_view);
         cardView.setCardBackgroundColor(getResources().getColor(R.color.secondary));
 
     }

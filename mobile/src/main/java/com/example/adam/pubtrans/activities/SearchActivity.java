@@ -47,16 +47,17 @@ import com.github.clans.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 17/06/2015.
  */
 public class SearchActivity extends BaseActivity implements Callback<ArrayList<NearMeResult>>,IPubActivity, SearchView.OnQueryTextListener{
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
 
-    ViewPager mViewPager;
-
+    @Bind(R.id.pager) ViewPager mViewPager;
+    @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
     ArrayList<Fragment> fragments;
     ArrayList<NearMeResult> searchResults;
     @SuppressLint("MissingSuperCall")
@@ -64,12 +65,11 @@ public class SearchActivity extends BaseActivity implements Callback<ArrayList<N
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
+        ButterKnife.bind(this);
         setTitle("Search");
         searchResults = new ArrayList<>();
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
 
         MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);

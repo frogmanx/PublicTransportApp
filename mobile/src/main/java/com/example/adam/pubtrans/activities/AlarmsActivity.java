@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -43,22 +44,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 4/07/2015.
  */
 public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTimer {
 
-    ViewPager mViewPager;
     ArrayList<Fragment> fragments;
 
     ArrayList<Values>  alarms;
 
-    private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    CardView timerCardView;
-
+    @Bind(R.id.scrollableview) RecyclerView mRecyclerView;
+    @Bind(R.id.timer_card_view) CardView timerCardView;
+    @Bind(R.id.anim_toolbar) Toolbar toolbar;
+    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
     private Values alarmValues;
 
 
@@ -66,30 +70,19 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.disruptions);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         cleanseAlarms();
 
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("Alarms");
 
         setTitle("Alarms");
         alarms = new ArrayList<>();
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         fragments = (ArrayList<Fragment>) getFragments();
-
-        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-        // mViewPager.setAdapter(fragmentPagerAdapter);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.scrollableview);
-
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        timerCardView = (CardView) findViewById(R.id.timer_card_view);
 
         mAdapter = new ValuesAdapter(alarms);
         mRecyclerView.setAdapter(mAdapter);
@@ -122,10 +115,10 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
         Gson gson = new Gson();
         String jsonValues = gson.toJson(values);
         if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
-            ((TextView) timerCardView.findViewById(R.id.card_text)).setText("Remove Alarm");
+            ((TextView) ButterKnife.findById(timerCardView,R.id.card_text)).setText("Remove Alarm");
         }
         else {
-            ((TextView) timerCardView.findViewById(R.id.card_text)).setText("Activate Alarm");
+            ((TextView) ButterKnife.findById(timerCardView, R.id.card_text)).setText("Activate Alarm");
         }
 
         alarmValues = values;
@@ -218,7 +211,7 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
             Intent intent = new Intent(this, AlarmReceiver.class);
             Gson gson = new Gson();
             String jsonValues = gson.toJson(alarmValues);
-            intent.putExtra(PTVConstants.JSON_VALUES, jsonValues);
+            intent.putExtra(PTVConstants.JSON_VALUES, (Parcelable) alarmValues);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
             if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
                 SharedPreferencesHelper.removeAlarmJson(this, jsonValues);

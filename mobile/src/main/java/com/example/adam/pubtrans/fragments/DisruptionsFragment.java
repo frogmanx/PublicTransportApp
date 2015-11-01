@@ -22,12 +22,16 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Adam on 31/05/2015.
  */
 public class DisruptionsFragment extends Fragment implements IResults<Disruption> {
 
-    private RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Disruption> results;
@@ -49,7 +53,7 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+        ButterKnife.bind(this, v);
 
         mRecyclerView.setHasFixedSize(true);
 
@@ -65,9 +69,7 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
     }
 
     public void refresh() {
-        View v= getView();
-        if(v!=null) {
-            RelativeLayout pageLoading = (RelativeLayout) getView().findViewById(R.id.pageLoading);
+        if(pageLoading!=null) {
             pageLoading.setVisibility(View.VISIBLE);
         }
 
