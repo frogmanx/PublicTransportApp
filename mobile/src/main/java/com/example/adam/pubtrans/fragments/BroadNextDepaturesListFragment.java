@@ -20,6 +20,7 @@ import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.utils.ImageUtils;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
 
         mRecyclerView.setHasFixedSize(true);
 
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -86,7 +88,7 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
         super.onStart();
         mNearMeResult = ((SecondaryActivity) getActivity()).getSelectedStop();
 
-        if(mNearMeResult.result!=null) {
+        if(mNearMeResult!=null && mNearMeResult.result!=null) {
             transportType.setText(mNearMeResult.result.locationName);
             imageView.setImageResource(ImageUtils.getTransportImageResourceWhite(mNearMeResult.result.transportType));
         }

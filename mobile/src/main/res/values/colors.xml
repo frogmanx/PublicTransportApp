@@ -12,4 +12,6 @@
     <item name="semiTransparent" type="color">#44999999</item>
     <item name="white" type="color">#FFFFFF</item>
 
+    <color name="foreground_grid">#03a9f4</color>
+
 </resources>

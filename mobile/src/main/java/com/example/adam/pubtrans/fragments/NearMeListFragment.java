@@ -1,7 +1,9 @@
 package com.example.adam.pubtrans.fragments;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import com.example.adam.pubtrans.adapters.NearMeResultAdapter;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.NearMeResult;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.model.Marker;
@@ -37,9 +40,13 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
 
     @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
     public final static String TAG = "NearMeListFragment";
-    private RecyclerView.Adapter mAdapter;
+    private NearMeResultAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<NearMeResult> results;
+    private ILocation mLocationDelegate;
+    public interface ILocation {
+        Location getLocation();
+    }
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
@@ -55,6 +62,16 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mLocationDelegate = (ILocation) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement ILocation");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
@@ -67,6 +84,7 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         if(getActivity() instanceof IPubActivity) {
             results = ((IPubActivity)getActivity()).getNearMeResults();
         }
@@ -77,7 +95,7 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
 
 
 
-        mAdapter = new NearMeResultAdapter(results);
+        mAdapter = new NearMeResultAdapter(results, mLocationDelegate.getLocation());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -91,6 +109,10 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
 
     public void refresh() {
 
+    }
+
+    public void setLocation(Location location) {
+        if(mAdapter!=null) mAdapter.setLocation(location);
     }
 
     public void setResults(ArrayList<NearMeResult> results) {

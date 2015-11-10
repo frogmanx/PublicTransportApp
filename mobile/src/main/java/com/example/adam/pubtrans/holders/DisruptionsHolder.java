@@ -35,9 +35,6 @@ public class DisruptionsHolder extends RecyclerView.ViewHolder implements View.O
     public void bindResult(Disruption disruptionsResult) {
         mDisruptionsResult = disruptionsResult;
         transportType.setText(mDisruptionsResult.title);
-        locationName.setText(mDisruptionsResult.type);
-        timeTimeTableUTC.setText(mDisruptionsResult.description);
-
 
         imageView.setImageResource(ImageUtils.getTransportImageResource(this.mDisruptionsResult.type));
     }

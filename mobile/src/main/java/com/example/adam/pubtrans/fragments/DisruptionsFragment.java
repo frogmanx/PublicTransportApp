@@ -18,6 +18,7 @@ import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.BroadNextDeparturesResult;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
 
         mRecyclerView.setHasFixedSize(true);
 
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 

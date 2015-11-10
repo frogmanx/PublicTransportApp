@@ -399,7 +399,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
                             LatLngBounds bounds = builder.build();
                             int padding = 10; // offset from edges of the map in pixels
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                            googleMap.animateCamera(cu);
+                            googleMap.moveCamera(cu);
                         }
 
                     }catch (IllegalStateException e) {

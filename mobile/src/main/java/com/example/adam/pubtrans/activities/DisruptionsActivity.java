@@ -3,30 +3,23 @@ package com.example.adam.pubtrans.activities;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.androidmapsextensions.SupportMapFragment;
 import com.example.adam.pubtrans.R;
 import com.example.adam.pubtrans.adapters.DisruptionsAdapter;
-import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
-import com.example.adam.pubtrans.fragments.NearMeListFragment;
-import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
 import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
-import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Disruption;
 import com.example.adam.pubtrans.models.DisruptionsResult;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.WebApi;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +62,7 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         disruptionsResults = getDisruptionsResults();
 
         mAdapter = new DisruptionsAdapter(disruptionsResults);

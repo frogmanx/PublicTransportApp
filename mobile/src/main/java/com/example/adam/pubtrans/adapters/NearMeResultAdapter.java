@@ -1,5 +1,6 @@
 package com.example.adam.pubtrans.adapters;
 
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,13 @@ import java.util.ArrayList;
 public class NearMeResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<NearMeResult> mNearMeResults;
     int subPosition;
+    Location mLocation;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    public NearMeResultAdapter(ArrayList<NearMeResult> nearMeResults){
+    public NearMeResultAdapter(ArrayList<NearMeResult> nearMeResults, Location location){
         this.mNearMeResults = nearMeResults;
+        this.mLocation = location;
     }
 
     @Override
@@ -50,6 +53,12 @@ public class NearMeResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return TYPE_ITEM;
     }
 
+
+    public void setLocation(Location location) {
+        mLocation = location;
+        this.notifyDataSetChanged();
+    }
+
     private boolean isPositionHeader(int position) {
         return mNearMeResults.get(position).type== PTVConstants.HEADER_TYPE;
     }
@@ -58,7 +67,7 @@ public class NearMeResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int pos) {
         if(holder instanceof NearMeResultHolder) {
             NearMeResult nearMeResult = mNearMeResults.get(pos);
-            ((NearMeResultHolder) holder).bindResult(nearMeResult);
+            ((NearMeResultHolder) holder).bindResult(nearMeResult, mLocation);
         }
         else if(holder instanceof HeaderHolder) {
             ((HeaderHolder) holder).bindResult(mNearMeResults.get(pos).result.locationName);

@@ -14,6 +14,7 @@ import com.example.adam.pubtrans.activities.TertiaryActivity;
 import com.example.adam.pubtrans.adapters.ValuesAdapter;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Values;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -54,6 +55,7 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);

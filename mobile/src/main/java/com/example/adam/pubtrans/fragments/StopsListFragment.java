@@ -15,6 +15,7 @@ import com.example.adam.pubtrans.activities.TertiaryActivity;
 import com.example.adam.pubtrans.adapters.StopsResultAdapter;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Stop;
+import com.example.adam.pubtrans.views.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -59,6 +60,7 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         results = ((TertiaryActivity)getActivity()).getStopsList();
 
         mAdapter = new StopsResultAdapter(results);

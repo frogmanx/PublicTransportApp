@@ -60,7 +60,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends BaseActivity implements IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements NearMeListFragment.ILocation, IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     ArrayList<NearMeResult> nearMeResults;
@@ -256,6 +256,9 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
     }
     public ArrayList<Values> getAlarms() {return null;}
 
+    public Location getLocation() {
+        return mLastLocation;
+    }
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -328,19 +331,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
 
     @Override
     public void onMyLocationChange(Location location) {
-        /*String url = "";
-        try {
-           // url = WebApi.buildTTAPIURL("http://timetableapi.ptv.vic.gov.au", "65a71c46-0343-11e5-9cc2-02f9e320053a", "/v2/nearme/latitude/-37.82392/longitude/144.9462017", 1000460);
-            url = WebApi.buildTTAPIURL("http://timetableapi.ptv.vic.gov.au", "65a71c46-0343-11e5-9cc2-02f9e320053a", "/v2/nearme/latitude/-37.82392/longitude/144.9462017", 1000460);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-        WebApi.getNearMe()
-        mMarker = googleMap.addMarker(new MarkerOptions().position(loc));
-        if(googleMap != null){
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-        }*/
+
         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
         try {
             WebApi.getNearMe(loc, this);
@@ -355,6 +346,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
+            ((NearMeListFragment)fragments.get(1)).setLocation(mLastLocation);
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             try {
                 WebApi.getNearMe(loc, this);
@@ -407,9 +399,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
         shrinkFab();
         Intent intent = new Intent(this, SecondaryActivity.class);
         NearMeResult nearMeResult = marker.getData();
-        Gson gson = new Gson();
-        String jsonNearMeResult = gson.toJson(nearMeResult);
-        intent.putExtra(PTVConstants.JSON_NEARMERESULT, jsonNearMeResult);
+        intent.putExtra(PTVConstants.JSON_NEARMERESULT, nearMeResult);
         startActivity(intent);
     }
 
@@ -447,7 +437,7 @@ public class MainActivity extends BaseActivity implements IPubActivity, IFabAnim
                 LatLngBounds bounds = builder.build();
                 int padding = 10; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                googleMap.animateCamera(cu);
+                googleMap.moveCamera(cu);
                 firstLoad = false;
             }catch (IllegalStateException e) {
                 e.printStackTrace();
