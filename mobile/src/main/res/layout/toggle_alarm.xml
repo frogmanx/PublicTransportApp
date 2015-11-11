@@ -12,15 +12,16 @@
     <RelativeLayout
         android:id="@+id/confirm_timer"
         android:clickable="true"
-        android:layout_margin="100dp"
+        android:layout_margin="10dp"
         android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="wrap_content"
-            android:gravity="center"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/ic_alarm_black_48dp"/>
         <TextView
             android:layout_below="@+id/image_view"

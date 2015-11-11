@@ -196,10 +196,10 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
     protected void onPause() {
         super.onPause();
     }
-    /*
-* Called when a particular item from the navigation drawer
-* is selected.
-* */
+    /**
+    * Called when a particular item from the navigation drawer
+    * is selected.
+    * */
     private void selectItemFromDrawer(int position) {
         switch(position) {
             case 0: {
@@ -241,7 +241,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
 
         fList.add(SupportMapFragment.newInstance());
         fList.add(NearMeListFragment.newInstance("Fragment 2"));
-        fList.add(TramSimulatorFragment.newInstance("Fragment 3"));
+        //fList.add(TramSimulatorFragment.newInstance("Fragment 3"));
 
         return fList;
 

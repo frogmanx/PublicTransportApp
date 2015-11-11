@@ -19,7 +19,7 @@ public class DateUtils {
         if(utcTime.contentEquals("null")){
             return "";
         }
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.US);
+        SimpleDateFormat sdf= new SimpleDateFormat("HH:mm a", Locale.US);
         Log.e("ValuesHolder", utcTime);
         Date now = new Date();
         DateTime dateTime = new DateTime( utcTime, DateTimeZone.getDefault() );
@@ -27,7 +27,6 @@ public class DateUtils {
             dateTime = dateTime.plusDays(1);
         }
         Date scheduledTime = dateTime.toDate();
-        sdf.format(scheduledTime);
         long difference = scheduledTime.getTime()-now.getTime();
         return sdf.format(scheduledTime) + " (" + ISO8601.convertToTimeContext(difference) + ")";
 
@@ -45,8 +44,6 @@ public class DateUtils {
     public static long convertToMSAway(String utcTime) {
         DateTime utcDateTime = new DateTime( utcTime, DateTimeZone.getDefault() );
         Date now = new Date();
-        Log.e("HERERE2", Long.toString(utcDateTime.toDate().getTime()));
-        Log.e("HERERE3", Long.toString(now.getTime()));
         return utcDateTime.toDate().getTime()-now.getTime();
     }
 
@@ -54,14 +51,13 @@ public class DateUtils {
         if(utcTime.contentEquals("null")||comparisonTime.contentEquals("null")){
             return "";
         }
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.US);
+        SimpleDateFormat sdf= new SimpleDateFormat("HH:mm a", Locale.US);
         Log.e("ValuesHolder", utcTime);
         Date now = new Date();
         DateTime dateTime = new DateTime( utcTime, DateTimeZone.getDefault() );
         DateTime comparisonDateTime = new DateTime( comparisonTime, DateTimeZone.getDefault() );
         Date scheduledTime = dateTime.toDate();
         Date comparisionDate  = comparisonDateTime.toDate();
-        sdf.format(scheduledTime);
         long difference = scheduledTime.getTime()-comparisionDate.getTime();
         return sdf.format(scheduledTime) + " (" + ISO8601.convertToTimeContext(difference) + ")";
 

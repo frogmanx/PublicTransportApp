@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Created by Adam on 31/05/2015.
  */
 public interface IResults<T> {
-    public void setResults(ArrayList<T> results);
-    public void reloadResults();
-    public void refresh();
+    void setResults(ArrayList<T> results);
+    void reloadResults();
+    void refresh();
 }

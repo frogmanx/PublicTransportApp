@@ -27,19 +27,19 @@ public final class ISO8601 {
             timeDistance = Math.abs(timeDistance);
         }
         else {
-            endString = " from now";
+            endString = " away";
         }
         long nextTimeDistance = timeDistance / 1000; //second
         if(nextTimeDistance == 0) return Long.toString(timeDistance) + "ms" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //minute
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " seconds" + endString;
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " secs" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //hour
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " minutes" + endString;
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " mins" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 60; //days
-        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " hours" + endString;
+        if(nextTimeDistance == 0) return Long.toString(timeDistance) + " hrs" + endString;
         timeDistance = nextTimeDistance;
         nextTimeDistance = timeDistance / 24; //days
         if(nextTimeDistance == 0) return Long.toString(timeDistance) + " days" + endString;

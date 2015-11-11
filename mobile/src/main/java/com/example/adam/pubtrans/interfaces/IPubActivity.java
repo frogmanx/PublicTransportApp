@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Created by Adam on 17/06/2015.
  */
 public interface IPubActivity {
-    public ArrayList<NearMeResult> getNearMeResults();
-    public ArrayList<Disruption> getDisruptionsResults();
-    public ArrayList<Values> getAlarms();
+    ArrayList<NearMeResult> getNearMeResults();
+    ArrayList<Disruption> getDisruptionsResults();
+    ArrayList<Values> getAlarms();
 }

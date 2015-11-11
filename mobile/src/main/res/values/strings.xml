@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PubTrans</string>
+    <string name="app_name">Transit</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur magna tortor, semper eu feugiat eu, vehicula vitae lacus.</string>

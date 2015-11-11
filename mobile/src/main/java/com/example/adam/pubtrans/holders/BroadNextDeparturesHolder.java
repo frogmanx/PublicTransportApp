@@ -44,11 +44,10 @@ public class BroadNextDeparturesHolder extends ValuesBaseHolder {
         transportType.setText(mBroadNextDeparturesResults.platform.direction.directionName);
         locationName.setText(mBroadNextDeparturesResults.run.destinationName);
 
-        timeTimeTableUTC.setText(DateUtils.convertToContext(mBroadNextDeparturesResults.timeTimeTableUTC, false));
+        timeTimeTableUTC.setText("SC: " + DateUtils.convertToContext(mBroadNextDeparturesResults.timeTimeTableUTC, false));
 
         if(mBroadNextDeparturesResults.timeRealTimeUTC!=null) {
-            realTimeTableUTC.setText(DateUtils.convertToContext(mBroadNextDeparturesResults.timeRealTimeUTC, false));
-
+            realTimeTableUTC.setText("RT: " + DateUtils.convertToContext(mBroadNextDeparturesResults.timeRealTimeUTC, false));
         }
         imageView.setImageResource(ImageUtils.getTransportImageResource(this.mBroadNextDeparturesResults.run.transportType));
     }
