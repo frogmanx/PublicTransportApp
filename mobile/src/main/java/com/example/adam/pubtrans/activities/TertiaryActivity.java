@@ -333,10 +333,8 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
         ArrayList<Values> myResults = new ArrayList<>();
         if(valuesResults.size()>0 && valuesResults.get(0).realTime!=null&&valuesResults.get(0).realTime!=null) {
             for(int i = 0; i < valuesResults.size();i++) {
-                Log.e("HERERER", valuesResults.get(i).realTime);
                 if(valuesResults.get(i).realTime!=null) {
                     double x = DateUtils.convertToMSAway(valuesResults.get(i).realTime);
-                    Log.e("HERERERE", Double.toString(x));
                     if(x>0) {
                         myResults.add(valuesResults.get(i));
                     }
@@ -345,9 +343,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
         }
         else {
             for(int i = 0; i < valuesResults.size();i++) {
-                Log.e("HERERE", valuesResults.get(i).timeTable);
                 double x = DateUtils.convertToMSAway(valuesResults.get(i).timeTable);
-                Log.e("HERERE", Double.toString(x));
                 if(x>0) {
                     myResults.add(valuesResults.get(i));
                 }

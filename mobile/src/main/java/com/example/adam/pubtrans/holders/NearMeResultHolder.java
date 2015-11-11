@@ -61,7 +61,10 @@ public class NearMeResultHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View v) {
-        ((IFabAnimate)v.getContext()).shrinkFab();
+        if(v.getContext() instanceof IFabAnimate) {
+            ((IFabAnimate)v.getContext()).shrinkFab();
+        }
+
         Intent intent = new Intent(v.getContext(), SecondaryActivity.class);
         intent.putExtra(PTVConstants.JSON_NEARMERESULT, mNearMeResult);
 
