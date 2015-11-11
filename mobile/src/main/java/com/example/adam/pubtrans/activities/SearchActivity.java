@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -37,7 +38,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Adam on 17/06/2015.
  */
-public class SearchActivity extends BaseActivity implements Callback<ArrayList<NearMeResult>>,IPubActivity, SearchView.OnQueryTextListener{
+public class SearchActivity extends BaseActivity implements Callback<ArrayList<NearMeResult>>,IPubActivity, SearchView.OnQueryTextListener, NearMeListFragment.ILocation{
 
 
     @Bind(R.id.pager) ViewPager mViewPager;
@@ -154,4 +155,8 @@ public class SearchActivity extends BaseActivity implements Callback<ArrayList<N
     }
 
 
+    @Override
+    public Location getLocation() {
+        return null;
+    }
 }
