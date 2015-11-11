@@ -10,7 +10,7 @@
     android:layout_marginBottom="14dp"
     android:layout_marginLeft="14dp"
     android:layout_width="fill_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,29 +18,46 @@
         <Button
             android:id="@+id/flagLate"
             android:onClick="onClick"
+            android:background="@color/primaryLight"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Flag late"/>
+            android:layout_marginTop="@dimen/spacer_margin"
+            android:layout_marginBottom="@dimen/spacer_margin"
+            android:layout_marginLeft="@dimen/spacer_margin"
+            android:layout_marginRight="@dimen/spacer_margin"
+            android:text="@string/flag_late"/>
         <Button
             android:id="@+id/flagEarly"
             android:onClick="onClick"
+            android:background="@color/primaryLight"
             android:layout_below="@+id/flagLate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Flag early"/>
+            android:layout_marginBottom="@dimen/spacer_margin"
+            android:layout_marginLeft="@dimen/spacer_margin"
+            android:layout_marginRight="@dimen/spacer_margin"
+            android:text="@string/flag_early"/>
         <Button
             android:id="@+id/flagDirty"
             android:onClick="onClick"
+            android:background="@color/primaryLight"
             android:layout_below="@+id/flagEarly"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Flag dirty"/>
+            android:layout_marginBottom="@dimen/spacer_margin"
+            android:layout_marginLeft="@dimen/spacer_margin"
+            android:layout_marginRight="@dimen/spacer_margin"
+            android:text="@string/flag_dirty"/>
         <Button
             android:id="@+id/flagCrowded"
             android:onClick="onClick"
+            android:background="@color/primaryLight"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/flagDirty"
-            android:text="Flag crowded"/>
+            android:layout_marginBottom="@dimen/spacer_margin"
+            android:layout_marginLeft="@dimen/spacer_margin"
+            android:layout_marginRight="@dimen/spacer_margin"
+            android:text="@string/flag_crowded"/>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

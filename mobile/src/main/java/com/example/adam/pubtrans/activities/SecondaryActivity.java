@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
@@ -47,10 +46,11 @@ import butterknife.ButterKnife;
 public class SecondaryActivity extends BaseActivity implements Callback<ArrayList<BroadNextDeparturesResult>>, View.OnClickListener, IFabAnimate {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     public static final int MY_SNACKBAR_LENGTH = 3000;
-    FragmentManager fragmentManager;
-    private int drawingStartLocation;
+    FragmentManager mFragmentManager;
+    private int mDrawingStartLocation;
+    NearMeResult mNearMeResult;
+
     @Bind(R.id.contentRoot) LinearLayout contentRoot;
-    NearMeResult nearMeResult;
     @Bind(R.id.favouriteFab) SelectableFloatingActionButton favouriteFab;
     @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
     @Bind(R.id.favourite_card_view) CardView cardView;
@@ -69,11 +69,11 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
         setSupportActionBar(toolbar);
 
         setTitle("Broad Next Departures");
-        nearMeResult = getIntent().getParcelableExtra(PTVConstants.JSON_NEARMERESULT);
+        mNearMeResult = getIntent().getParcelableExtra(PTVConstants.JSON_NEARMERESULT);
 
 
         favouriteFab.setOnClickListener(this);
-        if(SharedPreferencesHelper.isFavouriteStop(this, nearMeResult)) {
+        if(SharedPreferencesHelper.isFavouriteStop(this, mNearMeResult)) {
             favouriteFab.setImageResource(R.drawable.star);
         }
         else {
@@ -81,7 +81,7 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
         }
 
         try {
-            WebApi.getBroadNextDepatures(nearMeResult.result.transportType, nearMeResult.result.stopId,5,this);
+            WebApi.getBroadNextDepatures(mNearMeResult.result.transportType, mNearMeResult.result.stopId,5,this);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -89,9 +89,9 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fragmentManager = getSupportFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
 
-        drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
+        mDrawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
         if (savedInstanceState == null) {
             contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -112,13 +112,13 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
     }
 
     public NearMeResult getSelectedStop() {
-        return nearMeResult;
+        return mNearMeResult;
     }
 
     private void startIntroAnimation() {
         growFab();
         contentRoot.setScaleY(0.1f);
-        contentRoot.setPivotY(drawingStartLocation);
+        contentRoot.setPivotY(mDrawingStartLocation);
         contentRoot.animate()
                 .scaleY(1)
                 .setDuration(200)
@@ -127,7 +127,7 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         //animateContent();
-                        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
+                        Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment);
                         ((BroadNextDepaturesListFragment) fragment).animateHeader();
                     }
                 })
@@ -143,14 +143,6 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
         Animation animScale = AnimationUtils.loadAnimation(this, R.anim.anim_grow);
         favouriteFab.startAnimation(animScale);
     }
-
-    /*private void animateContent() {
-        commentsAdapter.updateItems();
-        llAddComment.animate().translationY(0)
-                .setInterpolator(new DecelerateInterpolator())
-                .setDuration(200)
-                .start();
-    }*/
 
     public void shrinkCardView() {
         if(cardView.getVisibility()==View.VISIBLE) {
@@ -218,13 +210,12 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
+            Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment);
             if(fragment!=null) {
                 ((IResults) fragment).refresh();
             }
-            Bundle bundle = getIntent().getExtras();
             try {
-                WebApi.getBroadNextDepatures(bundle.getString(PTVConstants.TRANSPORT_TYPE), bundle.getInt(PTVConstants.STOP_ID),0,this);
+                WebApi.getBroadNextDepatures(mNearMeResult.result.transportType, mNearMeResult.result.stopId,0,this);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -265,21 +256,21 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
     }
 
     public boolean isFavouriteStop() {
-        return SharedPreferencesHelper.isFavouriteStop(this, nearMeResult);
+        return SharedPreferencesHelper.isFavouriteStop(this, mNearMeResult);
     }
 
     public void setFavouriteCurrentStop() {
-        SharedPreferencesHelper.saveFavouriteStop(this, nearMeResult);
+        SharedPreferencesHelper.saveFavouriteStop(this, mNearMeResult);
     }
 
     public void removeFavouriteCurrentStop() {
-        SharedPreferencesHelper.removeFavouriteStop(this, nearMeResult);
+        SharedPreferencesHelper.removeFavouriteStop(this, mNearMeResult);
     }
 
     public void success(final ArrayList<BroadNextDeparturesResult> broadNextDeparturesResults) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
+                Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment);
                 if(fragment!=null) {
                     ((IResults) fragment).setResults(broadNextDeparturesResults);
                 }
@@ -291,12 +282,6 @@ public class SecondaryActivity extends BaseActivity implements Callback<ArrayLis
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
         cy = (view.getBottom() - view.getTop()) / 2;
-        Log.e("Reveal", Integer.toString(cx));
-        Log.e("Reveal", Integer.toString(view.getLeft()));
-        Log.e("Reveal", Integer.toString(view.getRight()));
-        Log.e("Reveal", Integer.toString(cy));
-        Log.e("Reveal", Integer.toString(view.getTop()));
-        Log.e("Reveal", Integer.toString(view.getBottom()));
 
         radius = Math.max(cardView.getWidth(), cardView.getHeight()) * 2.0f;
 

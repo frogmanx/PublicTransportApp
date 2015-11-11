@@ -19,7 +19,6 @@ import java.util.ArrayList;
  */
 public class NearMeResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<NearMeResult> mNearMeResults;
-    int subPosition;
     Location mLocation;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;

@@ -23,8 +23,6 @@ import java.util.List;
  * Created by Adam on 10/11/2015.
  */
 public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final Activity host;
-    private final LayoutInflater layoutInflater;
     private static final int TYPE_DISRUPTION = 0;
     private static final int TYPE_BROAD_NEXT_DEPARTURES = 1;
     private static final int TYPE_NEAR_ME = 2;
@@ -33,8 +31,6 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> items;
 
     public GridAdapter(Activity hostActivity, ArrayList list) {
-        this.host = hostActivity;
-        layoutInflater = LayoutInflater.from(host);
         items = list;
         setHasStableIds(true);
     }
@@ -45,16 +41,20 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (viewType) {
             case TYPE_DISRUPTION:
                 return new DisruptionsHolder(
-                        layoutInflater.inflate(R.layout.holder_grid, parent, false));
+                        LayoutInflater.from(parent.getContext())
+                                .inflate(R.layout.holder_grid, parent, false));
             case TYPE_BROAD_NEXT_DEPARTURES:
                 return new BroadNextDeparturesHolder(
-                        layoutInflater.inflate(R.layout.holder_grid, parent, false));
+                        LayoutInflater.from(parent.getContext())
+                                .inflate(R.layout.holder_grid, parent, false));
             case TYPE_NEAR_ME:
                 return new NearMeResultHolder(
-                        layoutInflater.inflate(R.layout.holder_grid, parent, false));
+                        LayoutInflater.from(parent.getContext())
+                                .inflate(R.layout.holder_grid, parent, false));
             case TYPE_STOP:
                 return new StopsHolder(
-                        layoutInflater.inflate(R.layout.holder_grid, parent, false));
+                        LayoutInflater.from(parent.getContext())
+                                .inflate(R.layout.holder_grid, parent, false));
         }
         return null;
     }

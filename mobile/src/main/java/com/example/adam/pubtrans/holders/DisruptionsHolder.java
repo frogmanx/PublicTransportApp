@@ -20,9 +20,7 @@ import butterknife.ButterKnife;
  * Created by Adam on 28/05/2015.
  */
 public class DisruptionsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    @Bind(R.id.transport_type) TextView transportType;
-    @Bind(R.id.location_name) TextView locationName;
-    @Bind(R.id.time) TextView timeTimeTableUTC;
+    @Bind(R.id.transport_type) TextView titleView;
     @Bind(R.id.image) ImageView imageView;
     private Disruption mDisruptionsResult;
 
@@ -34,7 +32,7 @@ public class DisruptionsHolder extends RecyclerView.ViewHolder implements View.O
 
     public void bindResult(Disruption disruptionsResult) {
         mDisruptionsResult = disruptionsResult;
-        transportType.setText(mDisruptionsResult.title);
+        titleView.setText(mDisruptionsResult.title);
 
         imageView.setImageResource(ImageUtils.getTransportImageResource(this.mDisruptionsResult.type));
     }

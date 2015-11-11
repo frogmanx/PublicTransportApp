@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 public class StopsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     @Bind(R.id.transport_type) TextView transportType;
     @Bind(R.id.location_name) TextView locationName;
-    @Bind(R.id.time) TextView timeTimeTableUTC;
     @Bind(R.id.image) ImageView imageView;
     private Stop stop;
 

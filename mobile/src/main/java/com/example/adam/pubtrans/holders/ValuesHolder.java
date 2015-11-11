@@ -44,7 +44,7 @@ public class ValuesHolder extends ValuesBaseHolder {
         Log.e("ValuesHolder" , this.values.timeTable);
 
 
-        if(!this.values.realTime.contentEquals("null")) {
+        if(this.values.realTime!=null) {
             timeTimeTableUTC.setText(DateUtils.convertToContext(this.values.realTime, false));
             realTimeTableUTC.setText(DateUtils.convertToContext(this.values.timeTable, this.values.realTime, false));
         }

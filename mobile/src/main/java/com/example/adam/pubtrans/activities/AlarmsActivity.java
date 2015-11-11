@@ -12,7 +12,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,12 +19,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.adam.pubtrans.R;
-import com.example.adam.pubtrans.adapters.DisruptionsAdapter;
-import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
 import com.example.adam.pubtrans.adapters.ValuesAdapter;
 import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.interfaces.IAddTimer;
@@ -37,7 +33,6 @@ import com.example.adam.pubtrans.receivers.AlarmReceiver;
 import com.example.adam.pubtrans.utils.DateUtils;
 import com.example.adam.pubtrans.utils.PTVConstants;
 import com.example.adam.pubtrans.utils.SharedPreferencesHelper;
-import com.example.adam.pubtrans.utils.WebApi;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -52,18 +47,17 @@ import butterknife.ButterKnife;
  */
 public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTimer {
 
-    ArrayList<Fragment> fragments;
-
-    ArrayList<Values>  alarms;
+    ArrayList<Fragment> mFragments;
+    ArrayList<Values>  mAlarms;
+    private Values mAlarmValues;
 
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    @Bind(R.id.scrollableview) RecyclerView mRecyclerView;
+    @Bind(R.id.scrollableview) RecyclerView recylerView;
     @Bind(R.id.timer_card_view) CardView timerCardView;
     @Bind(R.id.anim_toolbar) Toolbar toolbar;
     @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
-    private Values alarmValues;
 
 
     @Override
@@ -78,14 +72,14 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
         collapsingToolbar.setTitle("Alarms");
 
         setTitle("Alarms");
-        alarms = new ArrayList<>();
-        fragments = (ArrayList<Fragment>) getFragments();
+        mAlarms = new ArrayList<>();
+        mFragments = (ArrayList<Fragment>) getFragments();
 
         mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        recylerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new ValuesAdapter(alarms);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new ValuesAdapter(mAlarms);
+        recylerView.setAdapter(mAdapter);
 
         updateAlarms();
 
@@ -108,7 +102,7 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
     public ArrayList<NearMeResult> getNearMeResults() {
         return null;
     }
-    public ArrayList<Values> getAlarms() {return alarms;}
+    public ArrayList<Values> getAlarms() {return mAlarms;}
 
     public void showAddTimerView(View view, Values values) {
 
@@ -121,8 +115,7 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
             ((TextView) ButterKnife.findById(timerCardView, R.id.card_text)).setText("Activate Alarm");
         }
 
-        alarmValues = values;
-        final View myView = view;
+        mAlarmValues = values;
         int cx = (view.getLeft() + view.getRight()) / 2;
         int cy = (view.getTop() + view.getBottom()) / 2;
         float radius = Math.max(timerCardView.getWidth(), timerCardView.getHeight()) * 2.0f;
@@ -183,10 +176,10 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
 
         ArrayList<String> tempArray = SharedPreferencesHelper.getAlarms(this);
         Gson gson = new Gson();
-        alarms.clear();
+        mAlarms.clear();
         for(int i = 0; i < tempArray.size();i++) {
             Values value = gson.fromJson(tempArray.get(i), Values.class);
-            alarms.add(value);
+            mAlarms.add(value);
         }
 
         mAdapter.notifyDataSetChanged();
@@ -197,11 +190,11 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
             Date alarmTime;
-            if(!alarmValues.realTime.contains("null")) {
-                alarmTime = DateUtils.convertToDate(alarmValues.realTime);
+            if(!mAlarmValues.realTime.contains("null")) {
+                alarmTime = DateUtils.convertToDate(mAlarmValues.realTime);
             }
             else {
-                alarmTime = DateUtils.convertToDate(alarmValues.timeTable);
+                alarmTime = DateUtils.convertToDate(mAlarmValues.timeTable);
             }
             //set pending and add the model to memory for ability to cancel
 
@@ -210,13 +203,13 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
             AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
             Gson gson = new Gson();
-            String jsonValues = gson.toJson(alarmValues);
-            intent.putExtra(PTVConstants.JSON_VALUES, (Parcelable) alarmValues);
+            String jsonValues = gson.toJson(mAlarmValues);
+            intent.putExtra(PTVConstants.JSON_VALUES, (Parcelable) mAlarmValues);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
             if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
                 SharedPreferencesHelper.removeAlarmJson(this, jsonValues);
                 alarmMgr.cancel(pendingIntent);
-                final Snackbar snackBar = Snackbar.make(layout, "Alarm has been removed for stop " + alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                final Snackbar snackBar = Snackbar.make(layout, "Alarm has been removed for stop " + mAlarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
@@ -230,7 +223,7 @@ public class AlarmsActivity extends BaseActivity implements IPubActivity,IAddTim
             else {
                 SharedPreferencesHelper.saveAlarmJson(jsonValues, this);
                 alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);
-                final Snackbar snackBar = Snackbar.make(layout, "Alarm has been set for stop " +  alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                final Snackbar snackBar = Snackbar.make(layout, "Alarm has been set for stop " +  mAlarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
                     @Override
                     public void onClick(View v)

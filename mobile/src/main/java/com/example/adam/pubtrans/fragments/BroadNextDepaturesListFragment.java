@@ -33,15 +33,12 @@ import butterknife.ButterKnife;
  */
 public class BroadNextDepaturesListFragment extends Fragment implements IResults<BroadNextDeparturesResult> {
 
-    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView recyclerView;
     @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<BroadNextDeparturesResult> results;
-    private ArrayList<Marker> markerArrayList;
+    private ArrayList<BroadNextDeparturesResult> mResults;
 
     @Bind(R.id.transport_type) TextView transportType;
-    @Bind(R.id.location_name) TextView locationName;
     @Bind(R.id.image) ImageView imageView;
     @Bind(R.id.header_item) RelativeLayout headerView;
     private NearMeResult mNearMeResult;
@@ -70,16 +67,16 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
         ButterKnife.bind(this, v);
         pageLoading.setVisibility(View.VISIBLE);
 
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
 
-        results = new ArrayList<>();
+        mResults = new ArrayList<>();
 
-        mAdapter = new BroadNextDepaturesAdapter(results);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new BroadNextDepaturesAdapter(mResults);
+        recyclerView.setAdapter(mAdapter);
 
         return v;
     }
@@ -115,8 +112,8 @@ public class BroadNextDepaturesListFragment extends Fragment implements IResults
 
         View v = getView();
         if(v!=null) {
-            this.results.clear();
-            this.results.addAll(results);
+            this.mResults.clear();
+            this.mResults.addAll(results);
             mAdapter.notifyDataSetChanged();
 
         }

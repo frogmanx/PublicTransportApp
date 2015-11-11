@@ -27,11 +27,10 @@ import butterknife.ButterKnife;
  */
 public class StopsListFragment extends Fragment implements IResults<Stop> {
 
-    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.my_recycler_view) RecyclerView recyclerView;
     @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Stop> results;
+    private ArrayList<Stop> mResults;
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
@@ -54,17 +53,17 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        results = ((TertiaryActivity)getActivity()).getStopsList();
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mResults = ((TertiaryActivity)getActivity()).getStopsList();
 
-        mAdapter = new StopsResultAdapter(results);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new StopsResultAdapter(mResults);
+        recyclerView.setAdapter(mAdapter);
 
 
         return v;
@@ -81,8 +80,8 @@ public class StopsListFragment extends Fragment implements IResults<Stop> {
     }
 
     public void setResults(ArrayList<Stop> results) {
-        this.results.clear();
-        this.results.addAll(results);
+        this.mResults.clear();
+        this.mResults.addAll(results);
         mAdapter.notifyDataSetChanged();
         pageLoading.setVisibility(View.GONE);
     }

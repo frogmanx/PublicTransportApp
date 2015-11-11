@@ -29,10 +29,10 @@ import butterknife.ButterKnife;
 /**
  * Created by Adam on 14/06/2015.
  */
-public class TramSimulatorFragment extends Fragment  implements View.OnClickListener{
+public class TramSimulatorFragment extends Fragment implements View.OnClickListener{
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-    MediaPlayer player;
+    MediaPlayer mPlayer;
     @Bind(R.id.fab1) FloatingActionButton fab1;
 
     public static final TramSimulatorFragment newInstance(String message) {
@@ -56,9 +56,9 @@ public class TramSimulatorFragment extends Fragment  implements View.OnClickList
 
         try {
             AssetFileDescriptor afd = getActivity().getAssets().openFd("ding.mp3");
-            player = new MediaPlayer();
-            player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-            player.prepare();
+            mPlayer = new MediaPlayer();
+            mPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+            mPlayer.prepare();
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,15 +69,14 @@ public class TramSimulatorFragment extends Fragment  implements View.OnClickList
     public void onClick(View v){
         try {
             AssetFileDescriptor afd = getActivity().getAssets().openFd("ding.mp3");
-            player = new MediaPlayer();
-            player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-            player.prepare();
+            mPlayer = new MediaPlayer();
+            mPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+            mPlayer.prepare();
         }catch (IOException e) {
             e.printStackTrace();
         }
 
-        player.start();
-
+        mPlayer.start();
 
     }
 

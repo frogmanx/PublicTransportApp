@@ -29,8 +29,7 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
     @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
     @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Values> results;
+    private ArrayList<Values> mResults;
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
@@ -57,12 +56,12 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        results = ((TertiaryActivity)getActivity()).getValuesList();
+        mResults = ((TertiaryActivity)getActivity()).getValuesList();
 
-        mAdapter = new ValuesAdapter(results);
+        mAdapter = new ValuesAdapter(mResults);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -80,8 +79,8 @@ public class ValuesListFragment extends Fragment implements IResults<Values> {
     }
 
     public void setResults(ArrayList<Values> results) {
-        this.results.clear();
-        this.results.addAll(results);
+        this.mResults.clear();
+        this.mResults.addAll(results);
         mAdapter.notifyDataSetChanged();
         pageLoading.setVisibility(View.GONE);
     }

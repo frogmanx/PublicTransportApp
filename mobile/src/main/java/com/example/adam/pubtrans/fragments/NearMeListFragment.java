@@ -38,11 +38,10 @@ import butterknife.ButterKnife;
  */
 public class NearMeListFragment extends Fragment implements IResults<NearMeResult> {
 
-    @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
     public final static String TAG = "NearMeListFragment";
+    @Bind(R.id.my_recycler_view) RecyclerView recyclerView;
     private NearMeResultAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<NearMeResult> results;
+    private ArrayList<NearMeResult> mResults;
     private ILocation mLocationDelegate;
     public interface ILocation {
         Location getLocation();
@@ -79,14 +78,14 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         if(getActivity() instanceof IPubActivity) {
-            results = ((IPubActivity)getActivity()).getNearMeResults();
+            mResults = ((IPubActivity)getActivity()).getNearMeResults();
         }
         else {
             Log.w(TAG, "Activity must implement IPubActivity!");
@@ -95,8 +94,8 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
 
 
 
-        mAdapter = new NearMeResultAdapter(results, mLocationDelegate.getLocation());
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new NearMeResultAdapter(mResults, mLocationDelegate.getLocation());
+        recyclerView.setAdapter(mAdapter);
 
 
 
@@ -116,13 +115,13 @@ public class NearMeListFragment extends Fragment implements IResults<NearMeResul
     }
 
     public void setResults(ArrayList<NearMeResult> results) {
-        if(this.results==null) {
-            this.results = new ArrayList<>();
+        if(this.mResults==null) {
+            this.mResults = new ArrayList<>();
         }
-        this.results.clear();
-        this.results.addAll(results);
+        this.mResults.clear();
+        this.mResults.addAll(results);
         mAdapter.notifyDataSetChanged();
-        Log.e("NearListFragment", Integer.toString(this.results.size()));
+        Log.e("NearListFragment", Integer.toString(this.mResults.size()));
     }
 
 

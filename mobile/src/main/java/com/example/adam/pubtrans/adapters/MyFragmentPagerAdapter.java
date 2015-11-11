@@ -9,11 +9,11 @@ import java.util.ArrayList;
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private final String[] TITLES = {"Map", "List", "Test"};
-    private ArrayList<Fragment> fragments;
+    private ArrayList<Fragment> mFragments;
 
     public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragmentArrayList) {
         super(fm);
-        this.fragments = fragmentArrayList;
+        this.mFragments = fragmentArrayList;
     }
 
     @Override
@@ -23,11 +23,11 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return mFragments.size();
     }
 
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        return mFragments.get(position);
     }
 }

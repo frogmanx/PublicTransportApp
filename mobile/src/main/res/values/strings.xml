@@ -11,4 +11,8 @@
     <string name="bus">Bus</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="flag_late">Flag late</string>
+    <string name="flag_early">Flag early</string>
+    <string name="flag_dirty">Flag dirty</string>
+    <string name="flag_crowded">Flag crowded</string>
 </resources>

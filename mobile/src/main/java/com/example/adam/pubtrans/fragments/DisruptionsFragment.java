@@ -34,8 +34,7 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
     @Bind(R.id.my_recycler_view) RecyclerView mRecyclerView;
     @Bind(R.id.pageLoading) RelativeLayout pageLoading;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Disruption> results;
+    private ArrayList<Disruption> mResults;
 
     public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
@@ -59,12 +58,12 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        results = ((IPubActivity) getActivity()).getDisruptionsResults();
+        mResults = ((IPubActivity) getActivity()).getDisruptionsResults();
 
-        mAdapter = new DisruptionsAdapter(results);
+        mAdapter = new DisruptionsAdapter(mResults);
         mRecyclerView.setAdapter(mAdapter);
 
         return v;
@@ -84,8 +83,8 @@ public class DisruptionsFragment extends Fragment implements IResults<Disruption
     public void setResults(ArrayList<Disruption> results) {
         View v = getView();
         if(v!=null) {
-            this.results.clear();
-            this.results.addAll(results);
+            this.mResults.clear();
+            this.mResults.addAll(results);
             mAdapter.notifyDataSetChanged();
         }
 

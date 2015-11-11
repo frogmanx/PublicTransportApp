@@ -29,20 +29,19 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         ringtone.play();
         Values alarmValues = intent.getParcelableExtra(PTVConstants.JSON_VALUES);
 
-        NotificationCompat.Builder mBuilder =
+        NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(ImageUtils.getTransportImageResource(alarmValues.platform.stop.transportType))
                         .setContentTitle(alarmValues.platform.stop.locationName)
                         .setContentText("Arrived @ Stop");
         Intent stopAlarmIntent = new Intent(context, StopAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, stopAlarmIntent, 0);
-        mBuilder.setContentIntent(pendingIntent);
-        mBuilder.setAutoCancel(true);
-        NotificationManager mNotificationManager =
+        builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
+        NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
 
+        notificationManager.notify(1, builder.build());
 
     }
 }

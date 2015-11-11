@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -51,7 +50,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.androidmapsextensions.Marker;
 import com.androidmapsextensions.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,28 +58,29 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends BaseActivity implements NearMeListFragment.ILocation, IPubActivity, IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
+public class MainActivity extends BaseActivity implements NearMeListFragment.ILocation, IPubActivity,
+        IFabAnimate, OnMapReadyCallback, GoogleMap.OnMyLocationChangeListener, Callback<ArrayList<NearMeResult>>,
+        GoogleApiClient.ConnectionCallbacks, GoogleMap.OnInfoWindowClickListener, View.OnClickListener  {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    ArrayList<NearMeResult> nearMeResults;
-    ArrayList<Disruption>  disruptionsResults;
+    ArrayList<NearMeResult> mNearMeResults;
+    ArrayList<Disruption>  mDisruptionsResults;
     ArrayList<NearMeResult> filteredResults;
 
-    private ArrayList<Marker> markerArrayList;
-    ArrayList<Fragment> fragments;
-    private GoogleMap googleMap;
+    private ArrayList<Marker> mMarkerArrayList;
+    ArrayList<Fragment> mFragments;
+    private GoogleMap mGoogleMap;
     public final static String TAG = "MainActivity";
-    private ArrayList<String> filter;
-    private boolean firstLoad;
-    private boolean mapIsReady = false;
+    private ArrayList<String> mFilter;
+    private boolean mFirstLoad;
+    private boolean mMapIsReady = false;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    @Bind(R.id.pager) ViewPager mViewPager;
+    @Bind(R.id.pager) ViewPager viewPager;
     @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
     @Bind(R.id.tabs) SlidingTabLayout tabs;
-    @Bind(R.id.navList) ListView mDrawerList;
-    @Bind(R.id.drawerPane) RelativeLayout mDrawerPane;
-    @Bind(R.id.drawerLayout) DrawerLayout mDrawerLayout;
+    @Bind(R.id.navList) ListView drawerList;
+    @Bind(R.id.drawerLayout) DrawerLayout drawerLayout;
 
     @Bind(R.id.menu1) FloatingActionMenu fab;
 
@@ -89,7 +88,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
     @Bind(R.id.fab2) FloatingActionButton fab2;
     @Bind(R.id.fab3) FloatingActionButton fab3;
 
-    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
+    ArrayList<NavItem> mNavItems = new ArrayList<>();
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -101,15 +100,15 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
 
 
         setTitle("Near me");
-        firstLoad = true;
-        disruptionsResults = new ArrayList<>();
-        nearMeResults = new ArrayList<>();
-        fragments = (ArrayList<Fragment>) getFragments();
-        filter = new ArrayList<String>();
+        mFirstLoad = true;
+        mDisruptionsResults = new ArrayList<>();
+        mNearMeResults = new ArrayList<>();
+        mFragments = (ArrayList<Fragment>) getFragments();
+        mFilter = new ArrayList<>();
 
-        filter.add("train");
-        filter.add("tram");
-        filter.add("bus");
+        mFilter.add("train");
+        mFilter.add("tram");
+        mFilter.add("bus");
 
         mNavItems.add(new NavItem("Search", "Search for stops", R.drawable.ic_search_black_48dp));
         mNavItems.add(new NavItem("Home", "Keep your favourites here", R.drawable.ic_home_black_48dp));
@@ -117,17 +116,17 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
         mNavItems.add(new NavItem("Alarms", "View your transport alarms", R.drawable.ic_alarm_black_48dp));
 
         DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
-        mDrawerList.setAdapter(adapter);
+        drawerList.setAdapter(adapter);
 
         // Drawer Item click listeners
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItemFromDrawer(position);
             }
         });
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -149,10 +148,10 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
 
 
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        drawerLayout.setDrawerListener(mDrawerToggle);
 
-        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(fragmentPagerAdapter);
+        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mFragments);
+        viewPager.setAdapter(fragmentPagerAdapter);
 
         // Assiging the Sliding Tab Layout View
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -166,7 +165,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
         });
 
         // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(mViewPager);
+        tabs.setViewPager(viewPager);
 
 
         fab1.setOnClickListener(this);
@@ -177,8 +176,8 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
         fab2.setSelected(true);
         fab3.setSelected(true);
 
-        markerArrayList = new ArrayList<>();
-        ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
+        mMarkerArrayList = new ArrayList<>();
+        ((SupportMapFragment)mFragments.get(0)).getExtendedMapAsync(this);
         buildGoogleApiClient();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -187,7 +186,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
     @Override
     protected void onResume() {
         super.onResume();
-        if(mapIsReady) {
+        if(mMapIsReady) {
             filterResults();
         }
         growFab();
@@ -249,7 +248,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
     }
 
     public ArrayList<Disruption> getDisruptionsResults() {
-        return disruptionsResults;
+        return mDisruptionsResults;
     }
     public ArrayList<NearMeResult> getNearMeResults() {
         return filteredResults;
@@ -262,17 +261,17 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
 
     @Override
     public void onMapReady(GoogleMap map) {
-        googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
-        googleMap.setOnInfoWindowClickListener(this);
-        googleMap.setMyLocationEnabled(true);
+        mGoogleMap = ((SupportMapFragment)mFragments.get(0)).getExtendedMap();
+        mGoogleMap.setOnInfoWindowClickListener(this);
+        mGoogleMap.setMyLocationEnabled(true);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(new LatLng(-37.643099, 144.754956));
         builder.include(new LatLng(-38.434046, 145.595909));
         LatLngBounds bounds = builder.build();
         int padding = 10; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.moveCamera(cu);
-        mapIsReady = true;
+        mGoogleMap.moveCamera(cu);
+        mMapIsReady = true;
     }
 
 
@@ -291,7 +290,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            Fragment fragment = fragments.get(1);
+            Fragment fragment = mFragments.get(1);
             if(fragment!=null) {
                 ((IResults) fragment).refresh();
             }
@@ -346,7 +345,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            ((NearMeListFragment)fragments.get(1)).setLocation(mLastLocation);
+            ((NearMeListFragment)mFragments.get(1)).setLocation(mLastLocation);
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             try {
                 WebApi.getNearMe(loc, this);
@@ -364,7 +363,7 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
 
 
     public void success(ArrayList<NearMeResult> nearMeResults) {
-        this.nearMeResults = nearMeResults;
+        this.mNearMeResults = nearMeResults;
         runOnUiThread(new Runnable()
         {
 
@@ -381,13 +380,13 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
             FloatingActionButton fab = (FloatingActionButton) v;
             fab.setSelected(!fab.isSelected());
             if(fab.isSelected()) {
-                if(!filter.contains((String) fab.getTag())) {
-                    filter.add((String)fab.getTag());
+                if(!mFilter.contains((String) fab.getTag())) {
+                    mFilter.add((String)fab.getTag());
                 }
             }
             else {
-                if(filter.contains((String)fab.getTag())) {
-                    filter.remove((String)fab.getTag());
+                if(mFilter.contains((String)fab.getTag())) {
+                    mFilter.remove((String)fab.getTag());
                 }
             }
             filterResults();
@@ -415,30 +414,30 @@ public class MainActivity extends BaseActivity implements NearMeListFragment.ILo
             filteredResults.addAll(favourites);
         }
         filteredResults.add(new NearMeResult("Stops Nearby"));
-        markerArrayList.clear();
-        if(googleMap!=null) {
-            googleMap.clear();
+        mMarkerArrayList.clear();
+        if(mGoogleMap!=null) {
+            mGoogleMap.clear();
         }
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(NearMeResult result : nearMeResults) {
-            if (filter.contains(result.result.transportType)) {
+        for(NearMeResult result : mNearMeResults) {
+            if (mFilter.contains(result.result.transportType)) {
                 filteredResults.add(result);
                 LatLng loc = new LatLng(result.result.latitude, result.result.longitude);
-                Marker marker= googleMap.addMarker(new MarkerOptions().position(loc).title(result.result.locationName + " " + result.result.transportType).snippet(result.result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.result.transportType)));
+                Marker marker= mGoogleMap.addMarker(new MarkerOptions().position(loc).title(result.result.locationName + " " + result.result.transportType).snippet(result.result.suburb).icon(ImageUtils.getTransportPinDescriptor(result.result.transportType)));
                 marker.setData(result);
                 builder.include(marker.getPosition());
-                markerArrayList.add(marker);
+                mMarkerArrayList.add(marker);
             }
         }
-        Log.e("MainActivity", Integer.toString(filteredResults.size()));
-        ((IResults<NearMeResult>) fragments.get(1)).setResults((ArrayList<NearMeResult>) filteredResults.clone());
-        if(firstLoad) {
+        Log.e(TAG, Integer.toString(filteredResults.size()));
+        ((IResults<NearMeResult>) mFragments.get(1)).setResults((ArrayList<NearMeResult>) filteredResults.clone());
+        if(mFirstLoad) {
             try {
                 LatLngBounds bounds = builder.build();
                 int padding = 10; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                googleMap.moveCamera(cu);
-                firstLoad = false;
+                mGoogleMap.moveCamera(cu);
+                mFirstLoad = false;
             }catch (IllegalStateException e) {
                 e.printStackTrace();
             }

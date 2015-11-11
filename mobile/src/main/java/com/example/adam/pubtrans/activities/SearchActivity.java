@@ -8,41 +8,25 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.support.v7.widget.SearchView;
 
-import com.androidmapsextensions.SupportMapFragment;
 import com.example.adam.pubtrans.R;
-import com.example.adam.pubtrans.SlidingTabLayout;
-import com.example.adam.pubtrans.adapters.DrawerListAdapter;
 import com.example.adam.pubtrans.adapters.MyFragmentPagerAdapter;
-import com.example.adam.pubtrans.fragments.DisruptionsFragment;
 import com.example.adam.pubtrans.fragments.NearMeListFragment;
-import com.example.adam.pubtrans.fragments.TramSimulatorFragment;
 import com.example.adam.pubtrans.interfaces.Callback;
 import com.example.adam.pubtrans.interfaces.IPubActivity;
 import com.example.adam.pubtrans.interfaces.IResults;
 import com.example.adam.pubtrans.models.Disruption;
-import com.example.adam.pubtrans.models.NavItem;
 import com.example.adam.pubtrans.models.NearMeResult;
 import com.example.adam.pubtrans.models.Values;
 import com.example.adam.pubtrans.utils.WebApi;
-import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +42,8 @@ public class SearchActivity extends BaseActivity implements Callback<ArrayList<N
 
     @Bind(R.id.pager) ViewPager mViewPager;
     @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
-    ArrayList<Fragment> fragments;
-    ArrayList<NearMeResult> searchResults;
+    ArrayList<Fragment> mFragments;
+    ArrayList<NearMeResult> mSearchResults;
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +51,12 @@ public class SearchActivity extends BaseActivity implements Callback<ArrayList<N
         setContentView(R.layout.search_activity);
         ButterKnife.bind(this);
         setTitle("Search");
-        searchResults = new ArrayList<>();
-        fragments = (ArrayList<Fragment>) getFragments();
+        mSearchResults = new ArrayList<>();
+        mFragments = (ArrayList<Fragment>) getFragments();
 
         setSupportActionBar(toolbar);
 
-        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+        MyFragmentPagerAdapter fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(fragmentPagerAdapter);
 
 
@@ -86,20 +70,20 @@ public class SearchActivity extends BaseActivity implements Callback<ArrayList<N
     }
 
     public void success(ArrayList<NearMeResult> searchNearMeResults) {
-        this.searchResults = searchNearMeResults;
+        this.mSearchResults = searchNearMeResults;
         runOnUiThread(new Runnable()
         {
 
             public void run()
             {
-                ((IResults) fragments.get(0)).setResults(searchResults);
+                ((IResults) mFragments.get(0)).setResults(mSearchResults);
             }
         });
     }
 
 
     public ArrayList<NearMeResult> getNearMeResults() {
-        return searchResults;
+        return mSearchResults;
     }
 
 

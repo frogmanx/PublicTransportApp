@@ -32,16 +32,15 @@ import butterknife.ButterKnife;
  */
 public class DisruptionsActivity extends BaseActivity implements IPubActivity, Callback<DisruptionsResult> {
 
-    @Bind(R.id.anim_toolbar) Toolbar toolbar;
-    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
-    ArrayList<Fragment> fragments;
+    ArrayList<Fragment> mFragments;
+    ArrayList<Disruption>  mDisruptionsResults;
 
-    ArrayList<Disruption>  disruptionsResults;
-
-    @Bind(R.id.scrollableview) RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    @Bind(R.id.anim_toolbar) Toolbar toolbar;
+    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
+    @Bind(R.id.scrollableview) RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +53,8 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
         collapsingToolbar.setTitle("Disruptions");
 
         setTitle("Disruptions");
-        disruptionsResults = new ArrayList<>();
-        fragments = (ArrayList<Fragment>) getFragments();
+        mDisruptionsResults = new ArrayList<>();
+        mFragments = (ArrayList<Fragment>) getFragments();
 
 
 
@@ -63,9 +62,9 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        disruptionsResults = getDisruptionsResults();
+        mDisruptionsResults = getDisruptionsResults();
 
-        mAdapter = new DisruptionsAdapter(disruptionsResults);
+        mAdapter = new DisruptionsAdapter(mDisruptionsResults);
         mRecyclerView.setAdapter(mAdapter);
 
         try {
@@ -91,7 +90,7 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
 
 
     public ArrayList<Disruption> getDisruptionsResults() {
-        return disruptionsResults;
+        return mDisruptionsResults;
     }
 
     public ArrayList<NearMeResult> getNearMeResults() {
@@ -119,14 +118,14 @@ public class DisruptionsActivity extends BaseActivity implements IPubActivity, C
         runOnUiThread(new Runnable() {
 
             public void run() {
-                disruptionsResults.clear();
-                disruptionsResults.addAll(mydisruptionsResults.general);
-                disruptionsResults.addAll(mydisruptionsResults.metroBus);
-                disruptionsResults.addAll(mydisruptionsResults.metroTrain);
-                disruptionsResults.addAll(mydisruptionsResults.metroTram);
-                disruptionsResults.addAll(mydisruptionsResults.regionalBus);
-                disruptionsResults.addAll(mydisruptionsResults.regionalCoach);
-                disruptionsResults.addAll(mydisruptionsResults.regionalTrain);
+                mDisruptionsResults.clear();
+                mDisruptionsResults.addAll(mydisruptionsResults.general);
+                mDisruptionsResults.addAll(mydisruptionsResults.metroBus);
+                mDisruptionsResults.addAll(mydisruptionsResults.metroTrain);
+                mDisruptionsResults.addAll(mydisruptionsResults.metroTram);
+                mDisruptionsResults.addAll(mydisruptionsResults.regionalBus);
+                mDisruptionsResults.addAll(mydisruptionsResults.regionalCoach);
+                mDisruptionsResults.addAll(mydisruptionsResults.regionalTrain);
                 mAdapter.notifyDataSetChanged();
             }
         });

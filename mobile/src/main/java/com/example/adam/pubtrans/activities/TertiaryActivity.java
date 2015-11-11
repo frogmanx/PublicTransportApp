@@ -67,31 +67,31 @@ import butterknife.ButterKnife;
  * Created by Adam on 31/05/2015.
  */
 public class TertiaryActivity extends BaseActivity implements Callback<ArrayList<Values>>, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, IFabAnimate, IAddTimer {
+
+    public final static String TAG = "MainActivity";
+
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    FragmentManager fragmentManager;
-    ArrayList<Stop> stopsList;
-    ArrayList<Values> valuesList;
+    FragmentManager mFragmentManager;
+    ArrayList<Stop> mStopsList;
+    ArrayList<Values> mValuesList;
+    private Values mAlarmValues;
     public static double THRESHOLD = 240000;
 
-    private ArrayList<Marker> markerArrayList;
-    ArrayList<Fragment> fragments;
-    private GoogleMap googleMap;
-    public final static String TAG = "MainActivity";
-    @Bind(R.id.pager) ViewPager mViewPager;
+    ArrayList<Marker> mMarkerArrayList;
+    ArrayList<Fragment> mFragments;
+    GoogleMap mGoogleMap;
+
+    @Bind(R.id.pager) ViewPager viewPager;
     @Bind(R.id.my_awesome_toolbar) Toolbar toolbar;
     @Bind(R.id.tabs) SlidingTabLayout tabs;
-    Toolbar bottomToolbar;
     @Bind(R.id.card_view) CardView cardView;
     @Bind(R.id.timer_card_view) CardView timerCardView;
+    @Bind(R.id.fab) SelectableFloatingActionButton fab;
 
-    private Values alarmValues;
     int cx;
     int cy;
     float radius;
-
-
-    @Bind(R.id.fab) SelectableFloatingActionButton fab;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -102,15 +102,14 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
         setSupportActionBar(toolbar);
         setTitle("Stopping Pattern");
 
-        stopsList = new ArrayList<>();
-        valuesList = new ArrayList<>();
+        mStopsList = new ArrayList<>();
+        mValuesList = new ArrayList<>();
 
-        fragments = (ArrayList<Fragment>) getFragments();
+        mFragments = (ArrayList<Fragment>) getFragments();
 
 
-
-        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(adapter);
+        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mFragments);
+        viewPager.setAdapter(adapter);
 
         // Assiging the Sliding Tab Layout View
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -124,20 +123,20 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
         });
 
         // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(mViewPager);
+        tabs.setViewPager(viewPager);
 
 
-        markerArrayList = new ArrayList<>();
+        mMarkerArrayList = new ArrayList<>();
         //((SupportMapFragment)fragments.get(0)).getMapAsync(this);
         buildGoogleApiClient();
 
 
 
-        ((SupportMapFragment)fragments.get(0)).getExtendedMapAsync(this);
+        ((SupportMapFragment)mFragments.get(0)).getExtendedMapAsync(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fragmentManager = getSupportFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -180,7 +179,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
             ((TextView) timerCardView.findViewById(R.id.card_text)).setText("Activate Alarm");
         }
 
-        alarmValues = values;
+        mAlarmValues = values;
         final View myView = view;
         cx = (view.getLeft() + view.getRight()) / 2;
         cy = (view.getTop() + view.getBottom()) / 2;
@@ -224,16 +223,16 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
 
     @Override
     public void onMapReady(GoogleMap map) {
-        googleMap = ((SupportMapFragment)fragments.get(0)).getExtendedMap();
-        googleMap.setMyLocationEnabled(true);
-        googleMap.setOnInfoWindowClickListener(this);
+        mGoogleMap = ((SupportMapFragment)mFragments.get(0)).getExtendedMap();
+        mGoogleMap.setMyLocationEnabled(true);
+        mGoogleMap.setOnInfoWindowClickListener(this);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(new LatLng(-37.643099, 144.754956));
         builder.include(new LatLng(-38.434046, 145.595909));
         LatLngBounds bounds = builder.build();
         int padding = 10; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.moveCamera(cu);
+        mGoogleMap.moveCamera(cu);
     }
 
 
@@ -279,7 +278,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            Fragment fragment = fragments.get(1);
+            Fragment fragment = mFragments.get(1);
             if(fragment!=null) {
                 ((IResults) fragment).refresh();
             }
@@ -304,10 +303,10 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     }
 
     public ArrayList<Stop> getStopsList() {
-        return stopsList;
+        return mStopsList;
     }
     public ArrayList<Values> getValuesList() {
-        return valuesList;
+        return mValuesList;
     }
 
 
@@ -354,20 +353,20 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
                 }
             }
         }
-        this.valuesList = myResults;
+        this.mValuesList = myResults;
 
         runOnUiThread(new Runnable()
         {
             public void run()
             {
-                ((IResults) fragments.get(1)).setResults(valuesList);
+                ((IResults) mFragments.get(1)).setResults(mValuesList);
                 if(valuesResults!=null && valuesResults.size() > 1 ) {
-                    googleMap.clear();
-                    markerArrayList.clear();
+                    mGoogleMap.clear();
+                    mMarkerArrayList.clear();
                 }
 
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for(Values object: valuesList){
+                for(Values object: mValuesList){
                     LatLng loc = new LatLng(object.platform.stop.latitude, object.platform.stop.longitude);
                     Marker marker;
                     if(object.realTime!=null) {
@@ -376,10 +375,10 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
 
                         if(x>0) {
                             // marker = googleMap.addMarker(new MarkerOptions().alpha(y).position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
-                            marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
+                            marker = mGoogleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("R " + y + " " + DateUtils.convertToContext(object.realTime, false)));
                             marker.setData(object);
 
-                            markerArrayList.add(marker);
+                            mMarkerArrayList.add(marker);
                             builder.include(marker.getPosition());
                         }
 
@@ -387,19 +386,19 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
                     else {
                         double x = DateUtils.convertToMSAway(object.timeTable);
                         if(x>0) {
-                            marker = googleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
+                            marker = mGoogleMap.addMarker(new MarkerOptions().position(loc).title(object.platform.stop.locationName).icon(ImageUtils.getTransportPinDescriptor(object.run.transportType)).snippet("T " + DateUtils.convertToContext(object.timeTable, false)));
                             marker.setData(object);
-                            markerArrayList.add(marker);
+                            mMarkerArrayList.add(marker);
                             builder.include(marker.getPosition());
                         }
                     }
 
                     try {
-                        if(googleMap != null) {
+                        if(mGoogleMap != null) {
                             LatLngBounds bounds = builder.build();
                             int padding = 10; // offset from edges of the map in pixels
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                            googleMap.moveCamera(cu);
+                            mGoogleMap.moveCamera(cu);
                         }
 
                     }catch (IllegalStateException e) {
@@ -415,11 +414,11 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
     public void onClick(View v) {
         if(v.getId()==R.id.confirm_timer) {
             Date alarmTime;
-            if(alarmValues.realTime!=null) {
-                alarmTime = DateUtils.convertToDate(alarmValues.realTime);
+            if(mAlarmValues.realTime!=null) {
+                alarmTime = DateUtils.convertToDate(mAlarmValues.realTime);
             }
             else {
-                alarmTime = DateUtils.convertToDate(alarmValues.timeTable);
+                alarmTime = DateUtils.convertToDate(mAlarmValues.timeTable);
             }
             //set pending and add the model to memory for ability to cancel
 
@@ -427,13 +426,13 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
             AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
             Gson gson = new Gson();
-            String jsonValues = gson.toJson(alarmValues);
+            String jsonValues = gson.toJson(mAlarmValues);
             intent.putExtra(PTVConstants.JSON_VALUES, jsonValues);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
             if(SharedPreferencesHelper.isAlarmActivated(this, jsonValues)) {
                 SharedPreferencesHelper.removeAlarmJson(this, jsonValues);
                 alarmMgr.cancel(pendingIntent);
-                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been removed for stop " + alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been removed for stop " + mAlarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
@@ -447,7 +446,7 @@ public class TertiaryActivity extends BaseActivity implements Callback<ArrayList
             else {
                 SharedPreferencesHelper.saveAlarmJson(jsonValues, this);
                 alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmTime.getTime(), pendingIntent);
-                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been set for stop " +  alarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
+                final Snackbar snackBar = Snackbar.make(fab, "Alarm has been set for stop " +  mAlarmValues.platform.stop.stopId, Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
